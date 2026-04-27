@@ -1,0 +1,506 @@
+[
+  {
+    "id": 1,
+    "lessonName": "Algorithms",
+    "questionText": "What is an algorithm?",
+    "options": [
+      "A step-by-step procedure to solve a problem",
+      "A programming language",
+      "A type of computer",
+      "A mathematical equation"
+    ],
+    "correctAnswer": 0,
+    "difficulty": "easy",
+    "explanation": "An algorithm is a step-by-step procedure that specifies how to solve a problem or complete a task. It's like a recipe for solving problems on a computer."
+  },
+  {
+    "id": 2,
+    "lessonName": "Algorithms",
+    "questionText": "Which of the following best describes a sorting algorithm?",
+    "options": [
+      "A method to organize data in a specific order",
+      "A way to write comments in code",
+      "A process to delete unwanted data",
+      "A technique to encrypt information"
+    ],
+    "correctAnswer": 0,
+    "difficulty": "easy",
+    "explanation": "A sorting algorithm is a procedure that arranges elements in a specific order, such as ascending or descending order."
+  },
+  {
+    "id": 3,
+    "lessonName": "Algorithms",
+    "questionText": "What is the time complexity of a linear search algorithm?",
+    "options": [
+      "O(n)",
+      "O(log n)",
+      "O(n²)",
+      "O(1)"
+    ],
+    "correctAnswer": 0,
+    "difficulty": "medium",
+    "explanation": "Linear search has a time complexity of O(n) because in the worst case, we might need to check every element in the list."
+  },
+  {
+    "id": 4,
+    "lessonName": "Algorithms",
+    "questionText": "Which algorithm is most efficient for searching in a sorted array?",
+    "options": [
+      "Binary search",
+      "Linear search",
+      "Bubble sort",
+      "Selection sort"
+    ],
+    "correctAnswer": 0,
+    "difficulty": "hard",
+    "explanation": "Binary search is the most efficient algorithm for searching a sorted array, with O(log n) time complexity."
+  },
+  {
+    "id": 5,
+    "lessonName": "Flowcharts",
+    "questionText": "What shape is used to represent a decision in a flowchart?",
+    "options": [
+      "Diamond",
+      "Rectangle",
+      "Circle",
+      "Arrow"
+    ],
+    "correctAnswer": 0,
+    "difficulty": "easy",
+    "explanation": "In flowcharts, a diamond shape represents a decision point where the flow can branch into different paths based on a condition."
+  },
+  {
+    "id": 6,
+    "lessonName": "Flowcharts",
+    "questionText": "What does a rectangle represent in a flowchart?",
+    "options": [
+      "A process or action",
+      "A decision point",
+      "The start or end",
+      "Input or output"
+    ],
+    "correctAnswer": 0,
+    "difficulty": "easy",
+    "explanation": "A rectangle in a flowchart represents a process or action that needs to be performed."
+  },
+  {
+    "id": 7,
+    "lessonName": "Flowcharts",
+    "questionText": "Which shape represents input or output in a flowchart?",
+    "options": [
+      "Parallelogram",
+      "Rectangle",
+      "Diamond",
+      "Oval"
+    ],
+    "correctAnswer": 0,
+    "difficulty": "medium",
+    "explanation": "A parallelogram is used to represent input/output operations in a flowchart."
+  },
+  {
+    "id": 8,
+    "lessonName": "Flowcharts",
+    "questionText": "What do arrows in a flowchart indicate?",
+    "options": [
+      "The flow or direction of the process",
+      "Decision points",
+      "Input operations",
+      "Variable declarations"
+    ],
+    "correctAnswer": 0,
+    "difficulty": "easy",
+    "explanation": "Arrows in a flowchart show the direction and flow of the process, connecting different elements."
+  },
+  {
+    "id": 9,
+    "lessonName": "Variables",
+    "questionText": "What is a variable?",
+    "options": [
+      "A named container that holds a value",
+      "A type of loop",
+      "A mathematical operation",
+      "A decision statement"
+    ],
+    "correctAnswer": 0,
+    "difficulty": "easy",
+    "explanation": "A variable is a named container that stores a value. It's like a labeled box where we can store and retrieve data."
+  },
+  {
+    "id": 10,
+    "lessonName": "Variables",
+    "questionText": "Which is a valid variable name in most programming languages?",
+    "options": [
+      "age_of_student",
+      "123name",
+      "class-name",
+      "first name"
+    ],
+    "correctAnswer": 0,
+    "difficulty": "medium",
+    "explanation": "Variable names should start with a letter or underscore, contain no spaces, and can include numbers. 'age_of_student' follows all these rules."
+  },
+  {
+    "id": 11,
+    "lessonName": "Variables",
+    "questionText": "What is the purpose of declaring a variable?",
+    "options": [
+      "To reserve memory space and assign a name to it",
+      "To delete data from memory",
+      "To display output on screen",
+      "To create a loop"
+    ],
+    "correctAnswer": 0,
+    "difficulty": "easy",
+    "explanation": "Declaring a variable reserves memory space and gives it a name so we can store and retrieve values."
+  },
+  {
+    "id": 12,
+    "lessonName": "Variables",
+    "questionText": "How many variables can be declared in a single program?",
+    "options": [
+      "As many as needed",
+      "Only one",
+      "Maximum 10",
+      "Maximum 100"
+    ],
+    "correctAnswer": 0,
+    "difficulty": "easy",
+    "explanation": "A program can declare as many variables as needed, limited only by available memory."
+  },
+  {
+    "id": 13,
+    "lessonName": "Data Types",
+    "questionText": "What is a data type?",
+    "options": [
+      "A classification of data that determines what kind of values a variable can hold",
+      "A programming language",
+      "A method to write comments",
+      "A type of loop"
+    ],
+    "correctAnswer": 0,
+    "difficulty": "easy",
+    "explanation": "A data type specifies what kind of values a variable can store, such as integers, strings, or booleans."
+  },
+  {
+    "id": 14,
+    "lessonName": "Data Types",
+    "questionText": "Which of the following is a string data type?",
+    "options": [
+      "\"Hello World\"",
+      "42",
+      "true",
+      "3.14"
+    ],
+    "correctAnswer": 0,
+    "difficulty": "easy",
+    "explanation": "A string is text data enclosed in quotes. '\"Hello World\"' is a string, while the others are number and boolean types."
+  },
+  {
+    "id": 15,
+    "lessonName": "Data Types",
+    "questionText": "What is an integer data type?",
+    "options": [
+      "A whole number without decimal points",
+      "A number with decimal points",
+      "A text value",
+      "A true or false value"
+    ],
+    "correctAnswer": 0,
+    "difficulty": "easy",
+    "explanation": "An integer is a whole number without any decimal points, such as 5, -3, or 100."
+  },
+  {
+    "id": 16,
+    "lessonName": "Data Types",
+    "questionText": "What data type would you use to store the value 'true' or 'false'?",
+    "options": [
+      "Boolean",
+      "Integer",
+      "String",
+      "Float"
+    ],
+    "correctAnswer": 0,
+    "difficulty": "medium",
+    "explanation": "A boolean data type can only hold two values: true or false. It's used for logical conditions."
+  },
+  {
+    "id": 17,
+    "lessonName": "Input/Output",
+    "questionText": "What does 'input' mean in programming?",
+    "options": [
+      "Receiving data from a user or external source",
+      "Processing data inside a program",
+      "Displaying data on screen",
+      "Storing data in memory"
+    ],
+    "correctAnswer": 0,
+    "difficulty": "easy",
+    "explanation": "Input is receiving data from the user or another source, allowing the program to get information to work with."
+  },
+  {
+    "id": 18,
+    "lessonName": "Input/Output",
+    "questionText": "What does 'output' mean in programming?",
+    "options": [
+      "Displaying or sending data to the user or external system",
+      "Receiving data from a user",
+      "Storing data in memory",
+      "Creating a variable"
+    ],
+    "correctAnswer": 0,
+    "difficulty": "easy",
+    "explanation": "Output is displaying or sending data to the user or another system, showing the results of a program."
+  },
+  {
+    "id": 19,
+    "lessonName": "Input/Output",
+    "questionText": "In Python, which function is used for output?",
+    "options": [
+      "print()",
+      "input()",
+      "get()",
+      "display()"
+    ],
+    "correctAnswer": 0,
+    "difficulty": "medium",
+    "explanation": "The print() function in Python is used to display output on the screen."
+  },
+  {
+    "id": 20,
+    "lessonName": "Input/Output",
+    "questionText": "What is the purpose of the input() function?",
+    "options": [
+      "To receive data from the user",
+      "To display data on screen",
+      "To store data in a file",
+      "To create a loop"
+    ],
+    "correctAnswer": 0,
+    "difficulty": "medium",
+    "explanation": "The input() function allows a program to receive and read data that the user types."
+  },
+  {
+    "id": 21,
+    "lessonName": "Conditions",
+    "questionText": "What is a conditional statement?",
+    "options": [
+      "A statement that executes different code based on whether a condition is true or false",
+      "A way to repeat code multiple times",
+      "A method to declare variables",
+      "A type of loop"
+    ],
+    "correctAnswer": 0,
+    "difficulty": "easy",
+    "explanation": "A conditional statement allows a program to make decisions and execute different code based on conditions."
+  },
+  {
+    "id": 22,
+    "lessonName": "Conditions",
+    "questionText": "What is the correct syntax for an 'if' statement?",
+    "options": [
+      "if condition: code",
+      "if code: condition",
+      "condition if: code",
+      "code if condition"
+    ],
+    "correctAnswer": 0,
+    "difficulty": "medium",
+    "explanation": "The correct syntax for an if statement is 'if condition: code', where the condition is evaluated first."
+  },
+  {
+    "id": 23,
+    "lessonName": "Conditions",
+    "questionText": "What does the 'else' statement do?",
+    "options": [
+      "Executes code if the previous if condition is false",
+      "Executes code if the condition is true",
+      "Repeats code multiple times",
+      "Declares a variable"
+    ],
+    "correctAnswer": 0,
+    "difficulty": "easy",
+    "explanation": "The 'else' statement provides an alternative path of execution when the 'if' condition evaluates to false."
+  },
+  {
+    "id": 24,
+    "lessonName": "Conditions",
+    "questionText": "What is the purpose of 'elif'?",
+    "options": [
+      "To check additional conditions if the previous 'if' is false",
+      "To end a conditional statement",
+      "To repeat code",
+      "To declare a variable"
+    ],
+    "correctAnswer": 0,
+    "difficulty": "medium",
+    "explanation": "'elif' (else if) allows us to check multiple conditions in sequence, handling different scenarios."
+  },
+  {
+    "id": 25,
+    "lessonName": "Loops",
+    "questionText": "What is a loop?",
+    "options": [
+      "A structure that repeats a block of code multiple times",
+      "A conditional statement",
+      "A variable declaration",
+      "A data type"
+    ],
+    "correctAnswer": 0,
+    "difficulty": "easy",
+    "explanation": "A loop is a programming structure that allows us to repeat a block of code multiple times without rewriting it."
+  },
+  {
+    "id": 26,
+    "lessonName": "Loops",
+    "questionText": "Which loop is best when you know exactly how many times you need to iterate?",
+    "options": [
+      "for loop",
+      "while loop",
+      "do-while loop",
+      "repeat loop"
+    ],
+    "correctAnswer": 0,
+    "difficulty": "medium",
+    "explanation": "A 'for' loop is best when you know the exact number of iterations because it uses a counter."
+  },
+  {
+    "id": 27,
+    "lessonName": "Loops",
+    "questionText": "What does a 'while' loop do?",
+    "options": [
+      "Repeats code as long as a condition is true",
+      "Repeats code a fixed number of times",
+      "Executes code once",
+      "Declares a variable"
+    ],
+    "correctAnswer": 0,
+    "difficulty": "easy",
+    "explanation": "A 'while' loop continues executing code as long as the specified condition remains true."
+  },
+  {
+    "id": 28,
+    "lessonName": "Loops",
+    "questionText": "What is an infinite loop?",
+    "options": [
+      "A loop that never ends because its condition is always true",
+      "A loop that runs once",
+      "A loop that runs exactly 10 times",
+      "A loop that skips iterations"
+    ],
+    "correctAnswer": 0,
+    "difficulty": "hard",
+    "explanation": "An infinite loop occurs when the condition is always true, causing the loop to repeat indefinitely unless interrupted."
+  },
+  {
+    "id": 29,
+    "lessonName": "Operators",
+    "questionText": "What is an arithmetic operator?",
+    "options": [
+      "A symbol used to perform mathematical operations",
+      "A type of variable",
+      "A data type",
+      "A control structure"
+    ],
+    "correctAnswer": 0,
+    "difficulty": "easy",
+    "explanation": "An arithmetic operator is a symbol like +, -, *, / used to perform mathematical calculations."
+  },
+  {
+    "id": 30,
+    "lessonName": "Operators",
+    "questionText": "What is the result of 10 + 5 * 2?",
+    "options": [
+      "20",
+      "30",
+      "25",
+      "15"
+    ],
+    "correctAnswer": 0,
+    "difficulty": "medium",
+    "explanation": "Following order of operations, multiplication (5 * 2 = 10) is done first, then addition (10 + 10 = 20)."
+  },
+  {
+    "id": 31,
+    "lessonName": "Operators",
+    "questionText": "What is a comparison operator?",
+    "options": [
+      "A symbol used to compare two values",
+      "A mathematical operator",
+      "A way to declare variables",
+      "A type of loop"
+    ],
+    "correctAnswer": 0,
+    "difficulty": "easy",
+    "explanation": "A comparison operator like ==, <, >, <= compares two values and returns true or false."
+  },
+  {
+    "id": 32,
+    "lessonName": "Operators",
+    "questionText": "Which operator is used to check if two values are equal?",
+    "options": [
+      "==",
+      "=",
+      "===",
+      "!="
+    ],
+    "correctAnswer": 0,
+    "difficulty": "medium",
+    "explanation": "The == operator checks if two values are equal. The = operator assigns a value to a variable."
+  },
+  {
+    "id": 33,
+    "lessonName": "Error Detection",
+    "questionText": "What is a syntax error?",
+    "options": [
+      "An error in the code structure or grammar",
+      "An error that occurs during program execution",
+      "An error in logic",
+      "A type of data"
+    ],
+    "correctAnswer": 0,
+    "difficulty": "easy",
+    "explanation": "A syntax error occurs when the code doesn't follow the rules of the programming language, like forgetting a semicolon or colon."
+  },
+  {
+    "id": 34,
+    "lessonName": "Error Detection",
+    "questionText": "What is a logic error?",
+    "options": [
+      "An error where the program runs but produces incorrect results",
+      "An error in code grammar",
+      "An error that prevents compilation",
+      "A type of variable"
+    ],
+    "correctAnswer": 0,
+    "difficulty": "medium",
+    "explanation": "A logic error occurs when the program runs successfully but doesn't do what was intended, producing wrong output."
+  },
+  {
+    "id": 35,
+    "lessonName": "Error Detection",
+    "questionText": "What is debugging?",
+    "options": [
+      "The process of finding and fixing errors in a program",
+      "Writing more code",
+      "Creating variables",
+      "Adding comments"
+    ],
+    "correctAnswer": 0,
+    "difficulty": "easy",
+    "explanation": "Debugging is the process of identifying and fixing errors (bugs) in a program to make it work correctly."
+  },
+  {
+    "id": 36,
+    "lessonName": "Error Detection",
+    "questionText": "Which of the following is a common debugging technique?",
+    "options": [
+      "Using print statements to check variable values",
+      "Ignoring error messages",
+      "Rewriting the entire program",
+      "Using random variable names"
+    ],
+    "correctAnswer": 0,
+    "difficulty": "medium",
+    "explanation": "Using print statements (or console.log in JavaScript) to check variable values is a fundamental debugging technique."
+  }
+]

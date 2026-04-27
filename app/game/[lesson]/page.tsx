@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { useRouter, useParams } from "next/navigation";
+import { useRouter, useParams, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { GameHeader } from "@/components/GameHeader";
 import { QuestionCard } from "@/components/QuestionCard";
@@ -19,7 +19,8 @@ import {
   updateLessonStats,
   updateGameProgress,
 } from "@/lib/storage";
-import { getTeacherData } from "@/lib/teacherStorage";
+import { getTeacherData, decodeLesson } from "@/lib/teacherStorage";
+import { useSyncProgress } from "@/hooks/useSyncProgress";
 
 interface Question {
   id: number;
@@ -38,7 +39,9 @@ import { useSound } from "@/hooks/useSound";
 export default function GamePage() {
   const router = useRouter();
   const params = useParams();
+  const searchParams = useSearchParams();
   const lesson = decodeURIComponent(params.lesson as string);
+  const { sync } = useSyncProgress();
 
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(true);
@@ -68,7 +71,18 @@ export default function GamePage() {
       setPowerups(data.gameProgress.powerups);
     }
     
-    // 1. Check if it's a custom teacher lesson
+    // 0. Check if data is in URL (Portable Quest)
+    const encodedData = searchParams.get("q");
+    if (encodedData) {
+      const decodedLesson = decodeLesson(encodedData);
+      if (decodedLesson && decodedLesson.questions.length > 0) {
+        setQuestions(decodedLesson.questions as any);
+        setLoading(false);
+        return;
+      }
+    }
+
+    // 1. Check if it's a custom teacher lesson (Local Storage)
     const teacherLessons = getTeacherData();
     const customLesson = teacherLessons.find(l => l.name.toLowerCase() === lessonLower);
 
@@ -173,6 +187,9 @@ export default function GamePage() {
 
     updateLessonStats(lesson, score);
     updateGameProgress(state.xpEarned, lesson, score);
+
+    // Sync to cloud if signed in
+    sync();
 
     setGameEnded(true);
   };

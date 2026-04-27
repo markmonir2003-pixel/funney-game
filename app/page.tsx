@@ -3,10 +3,14 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { GraduationCap, Play, Sparkles, Trophy, BookOpen, Star, LayoutDashboard } from "lucide-react";
+import { GraduationCap, Play, Sparkles, Trophy, BookOpen, Star, LayoutDashboard, LogIn } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { UserButton, SignInButton, SignedIn, SignedOut } from "@clerk/nextjs";
+import { useSyncProgress } from "@/hooks/useSyncProgress";
 
 export default function Home() {
+  useSyncProgress(); // Trigger cloud fetch on mount if signed in
+  
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -29,10 +33,6 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-background flex flex-col items-center justify-center px-4 py-12 md:py-20 relative overflow-hidden selection:bg-cyan-500/30">
-      {/* Top Bar with Theme Toggle */}
-      <div className="absolute top-6 right-6 z-50">
-        <ThemeToggle />
-      </div>
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <motion.div

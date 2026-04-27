@@ -261,6 +261,36 @@ export function getAchievements() {
   return getStorageData().gameProgress.achievements;
 }
 
+export async function syncCloudData(): Promise<void> {
+  if (typeof window === "undefined") return;
+  
+  const data = getStorageData();
+  try {
+    await fetch("/api/user/sync", {
+      method: "POST",
+      body: JSON.stringify({ progressData: data }),
+      headers: { "Content-Type": "application/json" },
+    });
+  } catch (error) {
+    console.error("Cloud sync failed", error);
+  }
+}
+
+export async function fetchCloudData(): Promise<StorageData | null> {
+  try {
+    const res = await fetch("/api/user/sync");
+    if (!res.ok) return null;
+    const { progressData } = await res.json();
+    if (progressData) {
+      saveStorageData(progressData);
+      return progressData;
+    }
+  } catch (error) {
+    console.error("Cloud fetch failed", error);
+  }
+  return null;
+}
+
 export function clearAllData(): void {
   if (typeof window === "undefined") return;
   localStorage.removeItem(STORAGE_KEY);

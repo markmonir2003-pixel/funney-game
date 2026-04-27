@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
+import { ClerkProvider } from '@clerk/nextjs'
 import './globals.css'
 
 const _geist = Geist({ subsets: ["latin"] });
@@ -30,6 +31,7 @@ export const metadata: Metadata = {
 }
 
 import { ThemeProvider } from '@/components/theme-provider'
+import { Header } from '@/components/Header'
 
 export default function RootLayout({
   children,
@@ -37,21 +39,24 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className="font-sans antialiased min-h-screen">
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="dark"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <div className="fixed inset-0 bg-background pointer-events-none" />
-          <div className="relative z-0">
+    <ClerkProvider>
+      <html lang="en" suppressHydrationWarning>
+        <body className="font-sans antialiased min-h-screen">
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="dark"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <div className="fixed inset-0 bg-background pointer-events-none" />
+          <div className="relative z-0 pt-20">
+            <Header />
             {children}
           </div>
-          {process.env.NODE_ENV === 'production' && <Analytics />}
-        </ThemeProvider>
-      </body>
-    </html>
+            {process.env.NODE_ENV === 'production' && <Analytics />}
+          </ThemeProvider>
+        </body>
+      </html>
+    </ClerkProvider>
   )
 }

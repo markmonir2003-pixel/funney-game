@@ -1,8 +1,10 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Zap, Flame, Clock, Target } from "lucide-react";
+import { Zap, Flame, Clock, Target, LogIn } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
+import { UserButton, SignInButton, useAuth } from "@clerk/nextjs";
+import { Button } from "./ui/button";
 
 interface GameHeaderProps {
   xp: number;
@@ -19,6 +21,7 @@ export function GameHeader({
   totalQuestions,
   timeRemaining,
 }: GameHeaderProps) {
+  const { isSignedIn, isLoaded } = useAuth();
   const progress = (currentQuestion / totalQuestions) * 100;
   const isTimerWarning = timeRemaining <= 10;
 
@@ -53,6 +56,27 @@ export function GameHeader({
           <div className="flex items-center gap-2 md:gap-4">
             <ThemeToggle />
             
+            {isLoaded && (
+              <>
+                {!isSignedIn ? (
+                  <SignInButton mode="modal">
+                    <Button variant="outline" className="rounded-xl border-border hover:bg-muted font-bold h-10 px-4">
+                      <LogIn className="w-4 h-4 mr-2" /> Sign In
+                    </Button>
+                  </SignInButton>
+                ) : (
+                  <UserButton 
+                    appearance={{
+                      elements: {
+                        userButtonAvatarBox: "w-10 h-10 rounded-xl border-2 border-primary/20",
+                        userButtonTrigger: "focus:shadow-none focus:ring-0"
+                      }
+                    }}
+                  />
+                )}
+              </>
+            )}
+
             {/* Timer */}
             <motion.div
               className={`flex items-center gap-2 rounded-2xl px-3 md:px-4 py-2 font-black text-base md:text-lg border-2 ${

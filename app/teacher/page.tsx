@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { getTeacherData, addCustomLesson, deleteCustomLesson, CustomLesson } from "@/lib/teacherStorage";
+import { getTeacherData, addCustomLesson, deleteCustomLesson, CustomLesson, encodeLesson } from "@/lib/teacherStorage";
 import { 
   Plus, 
   Trash2, 
@@ -56,24 +56,22 @@ export default function TeacherPortal() {
     }
   };
 
-  const copyLink = (name: string) => {
-    const url = `${window.location.origin}/game/${encodeURIComponent(name)}`;
+  const copyLink = (lesson: CustomLesson) => {
+    const encoded = encodeLesson(lesson);
+    const url = `${window.location.origin}/game/${encodeURIComponent(lesson.name)}?q=${encoded}`;
     navigator.clipboard.writeText(url);
     alert("Link copied to clipboard! Share it with your students.");
   };
 
-  const showQR = (name: string) => {
-    const url = `${window.location.origin}/game/${encodeURIComponent(name)}`;
+  const showQR = (lesson: CustomLesson) => {
+    const encoded = encodeLesson(lesson);
+    const url = `${window.location.origin}/game/${encodeURIComponent(lesson.name)}?q=${encoded}`;
     const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(url)}`;
     window.open(qrUrl, "_blank");
   };
 
   return (
     <main className="min-h-screen bg-background text-foreground p-4 md:p-8 relative selection:bg-purple-500/30">
-      <div className="absolute top-6 right-6 z-50">
-        <ThemeToggle />
-      </div>
-
       <div className="max-w-5xl mx-auto">
         <header className="flex flex-col md:flex-row md:items-center justify-between mb-12 gap-6 pt-12 md:pt-0">
           <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
@@ -191,10 +189,10 @@ export default function TeacherPortal() {
 
                        <div className="flex items-center justify-between pt-6 border-t border-border">
                           <div className="flex gap-2">
-                             <Button variant="outline" size="icon" className="rounded-xl border-border" onClick={() => copyLink(lesson.name)}>
+                             <Button variant="outline" size="icon" className="rounded-xl border-border" onClick={() => copyLink(lesson)}>
                                 <Share2 className="w-4 h-4 text-primary" />
                              </Button>
-                             <Button variant="outline" size="icon" className="rounded-xl border-border" onClick={() => showQR(lesson.name)}>
+                             <Button variant="outline" size="icon" className="rounded-xl border-border" onClick={() => showQR(lesson)}>
                                 <QrCode className="w-4 h-4 text-orange-500" />
                              </Button>
                           </div>

@@ -98,3 +98,26 @@ function getRandomFunnyColor(): string {
   ];
   return colors[Math.floor(Math.random() * colors.length)];
 }
+
+export function encodeLesson(lesson: CustomLesson): string {
+  try {
+    const json = JSON.stringify(lesson);
+    // Use encodeURIComponent to handle non-ASCII characters (like Arabic)
+    // then btoa to make it a safe base64 string
+    return btoa(encodeURIComponent(json));
+  } catch (e) {
+    console.error("Encoding failed", e);
+    return "";
+  }
+}
+
+export function decodeLesson(encoded: string): CustomLesson | null {
+  try {
+    // atob decodes base64, then decodeURIComponent restores non-ASCII characters
+    const json = decodeURIComponent(atob(encoded));
+    return JSON.parse(json);
+  } catch (e) {
+    console.error("Decoding failed", e);
+    return null;
+  }
+}

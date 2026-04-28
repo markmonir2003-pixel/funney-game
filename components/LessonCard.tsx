@@ -57,7 +57,7 @@ export function LessonCard({
           <div className="flex-1">
             {isCustom && (
               <span className="text-[10px] font-bold uppercase tracking-widest text-primary bg-primary/10 px-2 py-1 rounded-md">
-                Teacher Created
+                من إنشاء المعلم
               </span>
             )}
           </div>
@@ -66,11 +66,11 @@ export function LessonCard({
             <div className="flex items-center gap-2">
               <Trophy className={`w-4 h-4 ${bestScore > 0 ? 'text-yellow-500' : 'text-muted-foreground'}`} />
               <span className="text-sm font-bold text-foreground">
-                {bestScore}% <span className="text-muted-foreground font-medium">Best</span>
+                {bestScore}% <span className="text-muted-foreground font-medium">الأفضل</span>
               </span>
             </div>
             <div className="text-xs font-bold text-muted-foreground uppercase tracking-tighter">
-              {attempts} Attempts
+              {attempts} محاولات
             </div>
           </div>
         </div>

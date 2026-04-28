@@ -1,15 +1,11 @@
 import type { Metadata } from 'next'
-import { Geist, Geist_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { ClerkProvider } from '@clerk/nextjs'
 import './globals.css'
 
-const _geist = Geist({ subsets: ["latin"] });
-const _geistMono = Geist_Mono({ subsets: ["latin"] });
-
 export const metadata: Metadata = {
-  title: 'Code Challenge - Learn Programming Basics',
-  description: 'An interactive educational game for First Secondary Grade students learning programming fundamentals. Master algorithms, variables, loops, and more through gamified challenges.',
+  title: 'Play 2 Learn - تعلم أساسيات البرمجة',
+  description: 'لعبة تعليمية تفاعلية لطلاب الصف الأول الثانوي لتعلم أساسيات البرمجة. أتقن الخوارزميات والمتغيرات والحلقات والمزيد من خلال التحديات الممتعة.',
   generator: 'v0.app',
   icons: {
     icon: [
@@ -40,8 +36,13 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
-      <html lang="en" suppressHydrationWarning>
-        <body className="font-sans antialiased min-h-screen">
+      <html lang="ar" dir="rtl" suppressHydrationWarning>
+        <head>
+          <link rel="preconnect" href="https://fonts.googleapis.com" />
+          <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+          <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+        </head>
+        <body className="font-arabic antialiased min-h-screen">
           <ThemeProvider
             attribute="class"
             defaultTheme="dark"

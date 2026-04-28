@@ -17,7 +17,7 @@ export function Leaderboard() {
       <div className="p-8 border-b border-border bg-muted/30">
         <div className="flex items-center gap-3">
           <Trophy className="w-6 h-6 text-yellow-500" />
-          <h2 className="text-xl font-black uppercase tracking-tight">Arena Leaderboard</h2>
+          <h2 className="text-xl font-black uppercase tracking-tight">لوحة متصدري الساحة</h2>
         </div>
       </div>
       
@@ -50,16 +50,16 @@ export function Leaderboard() {
 
                 <div className="flex-1">
                   <p className={`font-black ${isYou ? 'text-primary' : 'text-foreground'}`}>
-                    {user.name} {isYou && "(You)"}
+                    {user.name} {isYou && "(أنت)"}
                   </p>
                   <p className="text-xs text-muted-foreground font-bold uppercase tracking-widest">
-                    Code Warrior
+                    محارب الكود
                   </p>
                 </div>
 
                 <div className="text-right">
                   <p className="text-lg font-black tabular-nums">{user.xp.toLocaleString()}</p>
-                  <p className="text-[10px] text-muted-foreground font-black uppercase">XP Total</p>
+                  <p className="text-[10px] text-muted-foreground font-black uppercase">مجموع النقاط</p>
                 </div>
               </motion.div>
             );

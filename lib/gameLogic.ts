@@ -1,4 +1,5 @@
-// Game logic utilities for XP, combo, and badge calculations
+// منطق اللعبة لحساب نقاط الخبرة (XP) والكومبو والأوسمة
+import { Zap, Target, Brain } from "lucide-react";
 
 export interface Badge {
   id: string;
@@ -10,38 +11,38 @@ export interface Badge {
 const BADGES: Record<string, Badge> = {
   perfectStart: {
     id: "perfectStart",
-    name: "Perfect Start",
-    description: "Answer first 3 questions correctly",
+    name: "بداية مثالية",
+    description: "أجب على أول 3 أسئلة بشكل صحيح",
     icon: "⭐",
   },
   comboKing: {
     id: "comboKing",
-    name: "Combo King",
-    description: "Get 5 correct answers in a row",
+    name: "ملك الكومبو",
+    description: "أجب على 5 أسئلة متتالية بشكل صحيح",
     icon: "🔥",
   },
   speedDemon: {
     id: "speedDemon",
-    name: "Speed Demon",
-    description: "Answer question in under 5 seconds",
+    name: "شيطان السرعة",
+    description: "أجب على السؤال في أقل من 5 ثوانٍ",
     icon: "⚡",
   },
   accuracyMaster: {
     id: "accuracyMaster",
-    name: "Accuracy Master",
-    description: "Score 100% on a lesson",
+    name: "سيد الدقة",
+    description: "احصل على درجة 100% في الدرس",
     icon: "🎯",
   },
   marathon: {
     id: "marathon",
-    name: "Marathon Runner",
-    description: "Complete 5 lessons",
+    name: "عداء الماراثون",
+    description: "أكمل 5 دروس",
     icon: "🏃",
   },
   phenomenal: {
     id: "phenomenal",
-    name: "Phenomenal",
-    description: "Score 90% or higher on 3 lessons",
+    name: "ظاهرة",
+    description: "احصل على درجة 90% أو أكثر في 3 دروس",
     icon: "🌟",
   },
 };
@@ -53,8 +54,8 @@ export const BASE_XP_VALUES = {
 };
 
 export const COMBO_MULTIPLIERS = {
-  3: 2, // 2x at 3 correct
-  5: 3, // 3x at 5 correct
+  3: 2, // مضاعفة مرتين عند 3 إجابات صحيحة
+  5: 3, // مضاعفة 3 مرات عند 5 إجابات صحيحة
 };
 
 export function calculateXP(
@@ -65,17 +66,17 @@ export function calculateXP(
   const baseXP = BASE_XP_VALUES[difficulty];
   let multiplier = 1;
 
-  // Apply combo multiplier
+  // تطبيق مضاعف الكومبو
   if (comboStreak >= 5) {
     multiplier = COMBO_MULTIPLIERS[5];
   } else if (comboStreak >= 3) {
     multiplier = COMBO_MULTIPLIERS[3];
   }
 
-  // Bonus XP for answering quickly (within 10 seconds)
+  // مكافأة سرعة للإجابة السريعة (خلال أول 10 ثوانٍ)
   let speedBonus = 0;
   if (timeRemaining > 20) {
-    speedBonus = 50; // Answered in under 10 seconds
+    speedBonus = 50; 
   }
 
   return Math.floor(baseXP * multiplier + speedBonus);
@@ -89,17 +90,17 @@ export function getStarRating(accuracy: number): number {
 
 export function getMotivationalMessage(score: number): string {
   if (score === 100) {
-    return "Absolute Legend! You're basically a supercomputer now! 🤖✨";
+    return "أسطورة مطلقة! أنت الآن حاسوب خارق! 🤖✨";
   } else if (score >= 90) {
-    return "So close to perfection! Even Einstein is jealous! 🧠🔥";
+    return "كنت قريباً جداً من الكمال! آينشتاين يغار منك! 🧠🔥";
   } else if (score >= 80) {
-    return "Epic skills! You're crushing it like a pro gamer! 🎮💪";
+    return "مهارات ملحمية! أنت تسحق الأسئلة مثل المحترفين! 🎮💪";
   } else if (score >= 70) {
-    return "Nice one! You passed! Time for a victory dance! 🕺🎉";
+    return "رائع! لقد نجحت! وقت رقصة النصر! 🕺🎉";
   } else if (score >= 50) {
-    return "Not bad, but I've seen a potato do better... just kidding! Try again! 🥔😜";
+    return "ليس سيئاً، لكنني رأيت حبة بطاطس تؤدي بشكل أفضل... أمزح فقط! حاول مرة أخرى! 🥔😜";
   } else {
-    return "Oops! Looks like your brain is on a coffee break. Let's try that again! ☕🤡";
+    return "أوه! يبدو أن عقلك في استراحة قهوة. لنحاول مرة أخرى! ☕🤡";
   }
 }
 
@@ -151,28 +152,28 @@ export function checkBadges(
 }
 
 export const LESSONS = [
-  "Algorithms",
-  "Flowcharts",
-  "Variables",
-  "Data Types",
-  "Input/Output",
-  "Conditions",
-  "Loops",
-  "Operators",
-  "Error Detection",
+  "الخوارزميات",
+  "خرائط التدفق",
+  "المتغيرات",
+  "أنواع البيانات",
+  "المدخلات والمخرجات",
+  "الشروط",
+  "الحلقات",
+  "المعاملات",
+  "اكتشاف الأخطاء",
 ];
 
 export function getLessonColor(lessonName: string): string {
   const colors: Record<string, string> = {
-    Algorithms: "from-blue-500 to-cyan-500",
-    Flowcharts: "from-purple-500 to-pink-500",
-    Variables: "from-green-500 to-emerald-500",
-    "Data Types": "from-orange-500 to-red-500",
-    "Input/Output": "from-yellow-500 to-orange-500",
-    Conditions: "from-pink-500 to-rose-500",
-    Loops: "from-indigo-500 to-purple-500",
-    Operators: "from-cyan-500 to-blue-500",
-    "Error Detection": "from-red-500 to-pink-500",
+    "الخوارزميات": "from-blue-500 to-cyan-500",
+    "خرائط التدفق": "from-purple-500 to-pink-500",
+    "المتغيرات": "from-green-500 to-emerald-500",
+    "أنواع البيانات": "from-orange-500 to-red-500",
+    "المدخلات والمخرجات": "from-yellow-500 to-orange-500",
+    "الشروط": "from-pink-500 to-rose-500",
+    "الحلقات": "from-indigo-500 to-purple-500",
+    "المعاملات": "from-cyan-500 to-blue-500",
+    "اكتشاف الأخطاء": "from-red-500 to-pink-500",
   };
 
   return colors[lessonName] || "from-gray-500 to-gray-600";

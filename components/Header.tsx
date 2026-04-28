@@ -17,7 +17,7 @@ export function Header() {
             <Sparkles className="w-6 h-6 text-primary-foreground" />
           </div>
           <span className="text-2xl font-black tracking-tight hidden sm:block">
-            Funny<span className="text-primary">Game</span>
+            Play <span className="text-primary">2</span> Learn
           </span>
         </Link>
 
@@ -29,7 +29,7 @@ export function Header() {
               {!isSignedIn ? (
                 <SignInButton mode="modal">
                   <Button variant="outline" className="rounded-xl border-border hover:bg-muted font-bold h-10 px-4">
-                    <LogIn className="w-4 h-4 mr-2" /> Sign In
+                    <LogIn className="w-4 h-4 ml-2" /> تسجيل الدخول
                   </Button>
                 </SignInButton>
               ) : (

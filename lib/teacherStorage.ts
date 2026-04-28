@@ -1,4 +1,5 @@
 // Storage utility for managing teacher-created lessons and questions
+import { supabase } from "./supabase";
 
 export interface CustomQuestion {
   id: string;
@@ -118,6 +119,46 @@ export function decodeLesson(encoded: string): CustomLesson | null {
     return JSON.parse(json);
   } catch (e) {
     console.error("Decoding failed", e);
+    return null;
+  }
+}
+
+export async function saveLessonToCloud(lesson: CustomLesson, teacherId?: string): Promise<string | null> {
+  try {
+    const { data, error } = await supabase
+      .from('lessons')
+      .upsert({
+        name: lesson.name,
+        description: lesson.description,
+        questions: lesson.questions,
+        teacher_id: teacherId,
+      }, { onConflict: 'name' })
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data.id;
+  } catch (e) {
+    console.error("Failed to save to cloud", e);
+    return null;
+  }
+}
+
+export async function getLessonFromCloud(id: string): Promise<CustomLesson | null> {
+  try {
+    const { data, error } = await supabase
+      .from('lessons')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (error) throw error;
+    return {
+      ...data,
+      questions: data.questions,
+    } as CustomLesson;
+  } catch (e) {
+    console.error("Failed to fetch from cloud", e);
     return null;
   }
 }

@@ -40,7 +40,7 @@ export function useGameState(questions: Question[]) {
     setState(prev => ({ ...prev, questions }));
   }, [questions]);
 
-  const isGameOver = state.currentQuestionIndex >= questions.length;
+  const isGameOver = questions.length > 0 && state.currentQuestionIndex >= questions.length;
   const currentQuestion = state.questions[state.currentQuestionIndex];
 
   const selectAnswer = useCallback((answerIndex: number) => {

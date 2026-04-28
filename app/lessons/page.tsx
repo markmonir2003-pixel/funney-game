@@ -74,13 +74,13 @@ export default function LessonsPage() {
                 <div className="space-y-2">
                   <div className="flex items-center gap-2 text-cyan-500 font-bold tracking-widest uppercase text-sm">
                     <Sparkles className="w-4 h-4" />
-                    <span>Student Arena</span>
+                    <span>ساحة الطالب</span>
                   </div>
-                  <h1 className="text-4xl sm:text-6xl font-black text-foreground tracking-tight">
-                    Choose Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">Quest</span>
+                  <h1 className="text-3xl md:text-5xl lg:text-6xl font-black text-foreground tracking-tight leading-tight">
+                    اختر <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">مهمتك</span>
                   </h1>
-                  <p className="text-muted-foreground text-base md:text-lg max-w-xl">
-                    Ready to level up? Pick a lesson and start earning XP!
+                  <p className="text-sm md:text-base lg:text-lg text-muted-foreground max-w-xl font-medium">
+                    جاهز لرفع مستواك؟ اختر درساً وابدأ بكسب النقاط!
                   </p>
                 </div>
 
@@ -89,8 +89,8 @@ export default function LessonsPage() {
                     <Button
                       className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl px-6 font-black"
                     >
-                      <ShoppingBag className="w-5 h-5 mr-2" />
-                      Hero Shop
+                      <ShoppingBag className="w-5 h-5 ml-2" />
+                      متجر الأبطال
                     </Button>
                   </Link>
                   <Link href="/" className="flex-1 md:flex-none">
@@ -98,33 +98,32 @@ export default function LessonsPage() {
                       variant="outline"
                       className="group border-border hover:bg-muted text-foreground rounded-xl px-6 h-12 transition-all w-full"
                     >
-                      <span className="mr-2 group-hover:-translate-x-1 transition-transform">←</span>
-                      Home
+                      الرئيسية
+                      <span className="ml-2 group-hover:translate-x-1 transition-transform">→</span>
                     </Button>
                   </Link>
                 </div>
               </div>
 
               {/* Stats bar */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-card backdrop-blur-xl border border-border rounded-3xl p-6 shadow-sm">
-                <div className="flex items-center gap-4 px-4">
-                  <div className="p-3 bg-cyan-500/10 rounded-2xl">
-                    <Trophy className="w-6 h-6 text-cyan-500" />
+               <div className="grid grid-cols-2 gap-4 bg-card backdrop-blur-xl border border-border rounded-[2rem] p-4 md:p-6 shadow-sm">
+                <div className="flex items-center gap-3 md:gap-4 px-2 md:px-4">
+                  <div className="p-2 md:p-3 bg-cyan-500/10 rounded-xl md:rounded-2xl shrink-0">
+                    <Trophy className="w-5 h-5 md:w-6 md:h-6 text-cyan-500" />
                   </div>
                   <div>
-                    <p className="text-xs text-muted-foreground font-bold uppercase tracking-wider">Total Experience</p>
-                    <p className="text-2xl font-black text-foreground">{totalXP} <span className="text-cyan-600 text-sm">XP</span></p>
+                    <p className="text-[10px] md:text-xs text-muted-foreground font-black uppercase tracking-widest">إجمالي النقاط</p>
+                    <p className="text-lg md:text-2xl font-black text-foreground leading-none">{totalXP} <span className="text-cyan-600 text-[10px] md:text-sm">نقطة</span></p>
                   </div>
                 </div>
-                <div className="hidden sm:block w-px bg-border my-2" />
-                <div className="flex items-center gap-4 px-4">
-                  <div className="p-3 bg-green-500/10 rounded-2xl">
-                    <BookOpen className="w-6 h-6 text-green-500" />
+                <div className="flex items-center gap-3 md:gap-4 px-2 md:px-4 border-r border-border">
+                  <div className="p-2 md:p-3 bg-green-500/10 rounded-xl md:rounded-2xl shrink-0">
+                    <BookOpen className="w-5 h-5 md:w-6 md:h-6 text-green-500" />
                   </div>
                   <div>
-                    <p className="text-xs text-muted-foreground font-bold uppercase tracking-wider">Lessons Mastered</p>
-                    <p className="text-2xl font-black text-foreground">
-                      {completedLessons.length} <span className="text-muted-foreground text-sm">/ {LESSONS.length + customLessons.length}</span>
+                    <p className="text-[10px] md:text-xs text-muted-foreground font-black uppercase tracking-widest">المتقنة</p>
+                    <p className="text-lg md:text-2xl font-black text-foreground leading-none">
+                      {completedLessons.length} <span className="text-muted-foreground text-[10px] md:text-sm">/ {LESSONS.length + customLessons.length}</span>
                     </p>
                   </div>
                 </div>
@@ -136,7 +135,7 @@ export default function LessonsPage() {
           <div className="mb-12">
             <h2 className="text-2xl font-bold text-foreground mb-6 flex items-center gap-2">
               <span className="w-2 h-8 bg-primary rounded-full" />
-              Teacher's Special Lessons
+              دروس المعلم الخاصة
             </h2>
             <motion.div
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
@@ -163,7 +162,7 @@ export default function LessonsPage() {
         {/* Default Lessons Section */}
         <h2 className="text-2xl font-bold text-foreground mb-6 flex items-center gap-2">
           <span className="w-2 h-8 bg-cyan-500 rounded-full" />
-          Standard Quests
+          المهمات القياسية
         </h2>
         <motion.div
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
@@ -190,32 +189,32 @@ export default function LessonsPage() {
             <Leaderboard />
 
             {/* External Study Hub Integration */}
-            <div className="bg-card border-2 border-primary/20 rounded-[2.5rem] p-8 shadow-xl relative overflow-hidden group hover:border-primary/50 transition-all">
+            <div className="bg-card border-2 border-primary/20 rounded-[2.5rem] p-8 shadow-xl relative overflow-hidden group hover:border-primary/50 transition-all text-right">
                <div className="absolute -top-6 -right-6 w-32 h-32 bg-primary/5 rounded-full blur-3xl group-hover:bg-primary/10 transition-colors" />
                <div className="flex items-center gap-3 mb-4">
                   <div className="p-3 bg-primary/10 rounded-2xl">
                      <LayoutDashboard className="w-6 h-6 text-primary" />
                   </div>
-                  <h3 className="text-xl font-black">Study Hub</h3>
+                  <h3 className="text-xl font-black">مركز المذاكرة</h3>
                </div>
                <p className="text-muted-foreground font-medium text-sm mb-6 leading-relaxed">
-                  Manage your daily tasks, take smart notes, and use the focus timer to stay ahead!
+                  نظّم مهامك اليومية، دوّن ملاحظات ذكية، واستخدم مؤقت التركيز لتبقى في المقدمة!
                </p>
                <a href="https://studey-smarter-hhw5.vercel.app/" target="_blank" rel="noopener noreferrer">
                  <Button className="w-full h-14 bg-gradient-to-r from-primary to-blue-600 hover:opacity-90 text-white rounded-2xl font-black text-lg shadow-lg shadow-primary/20">
-                    Open Dashboard <ChevronRight className="w-5 h-5 ml-2" />
+                    افتح لوحة التحكم <ChevronRight className="w-5 h-5 mr-2 rotate-180" />
                  </Button>
                </a>
             </div>
             
             {/* Quick Tip Card */}
-            <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-[2.5rem] p-8 text-white shadow-xl relative overflow-hidden group">
-               <div className="absolute top-0 right-0 p-4 opacity-20 group-hover:scale-110 transition-transform">
+            <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-[2.5rem] p-8 text-white shadow-xl relative overflow-hidden group text-right">
+               <div className="absolute top-0 left-0 p-4 opacity-20 group-hover:scale-110 transition-transform">
                   <Sparkles className="w-16 h-16" />
                </div>
-               <h3 className="text-xl font-black mb-2 relative z-10">Pro Tip!</h3>
+               <h3 className="text-xl font-black mb-2 relative z-10">نصيحة للمحترفين!</h3>
                <p className="text-white/80 font-medium text-sm relative z-10 leading-relaxed">
-                  Earn a 5x Combo streak to double your XP rewards for the next 3 questions!
+                  حقق سلسلة 5 إجابات متتالية لمضاعفة نقاطك في الـ 3 أسئلة القادمة!
                </p>
             </div>
           </aside>

@@ -37,7 +37,7 @@ export function GameHeader({
               animate={{ scale: xp > 0 ? [1, 1.05, 1] : 1 }}
             >
               <Zap className="w-4 h-4 text-cyan-500 fill-cyan-500" />
-              <span className="text-sm md:text-lg font-black text-foreground">{xp} <span className="text-cyan-600 text-[10px] md:text-xs uppercase tracking-widest ml-1">XP</span></span>
+              <span className="text-sm md:text-lg font-black text-foreground">{xp} <span className="text-cyan-600 text-[10px] md:text-xs uppercase tracking-widest mr-1 hidden sm:inline">نقطة خبرة</span><span className="text-cyan-600 text-[10px] uppercase tracking-widest mr-1 sm:hidden">نقطة</span></span>
             </motion.div>
 
             {/* Combo Badge */}
@@ -48,27 +48,27 @@ export function GameHeader({
                 animate={{ scale: 1, x: 0 }}
               >
                 <Flame className="w-4 h-4 text-orange-500 fill-orange-500" />
-                <span className="text-sm md:text-lg font-black text-foreground">{comboStreak} <span className="text-orange-500 text-[10px] md:text-xs uppercase tracking-widest ml-1">Combo</span></span>
+                <span className="text-sm md:text-lg font-black text-foreground">{comboStreak} <span className="text-orange-500 text-[10px] md:text-xs uppercase tracking-widest mr-1 hidden sm:inline">كومبو</span></span>
               </motion.div>
             )}
           </div>
 
-          <div className="flex items-center gap-2 md:gap-4">
+          <div className="flex items-center gap-1.5 md:gap-4">
             <ThemeToggle />
             
             {isLoaded && (
               <>
                 {!isSignedIn ? (
                   <SignInButton mode="modal">
-                    <Button variant="outline" className="rounded-xl border-border hover:bg-muted font-bold h-10 px-4">
-                      <LogIn className="w-4 h-4 mr-2" /> Sign In
+                    <Button variant="outline" className="rounded-xl border-border hover:bg-muted font-bold h-9 md:h-10 px-3 md:px-4 text-xs md:text-sm">
+                      <LogIn className="w-3.5 h-3.5 md:w-4 md:h-4 ml-1 md:ml-2" /> دخول
                     </Button>
                   </SignInButton>
                 ) : (
                   <UserButton 
                     appearance={{
                       elements: {
-                        userButtonAvatarBox: "w-10 h-10 rounded-xl border-2 border-primary/20",
+                        userButtonAvatarBox: "w-8 h-8 md:w-10 md:h-10 rounded-xl border-2 border-primary/20",
                         userButtonTrigger: "focus:shadow-none focus:ring-0"
                       }
                     }}
@@ -79,7 +79,7 @@ export function GameHeader({
 
             {/* Timer */}
             <motion.div
-              className={`flex items-center gap-2 rounded-2xl px-3 md:px-4 py-2 font-black text-base md:text-lg border-2 ${
+              className={`flex items-center gap-1.5 md:gap-2 rounded-2xl px-2.5 md:px-4 py-1.5 md:py-2 font-black text-sm md:text-lg border-2 ${
                 isTimerWarning
                   ? "bg-red-500/10 border-red-500/50 text-red-500"
                   : "bg-muted/50 border-border text-foreground"
@@ -87,8 +87,8 @@ export function GameHeader({
               animate={isTimerWarning ? { scale: [1, 1.1, 1], rotate: [0, 2, -2, 0] } : {}}
               transition={{ duration: 0.5, repeat: isTimerWarning ? Infinity : 0 }}
             >
-              <Clock className={`w-4 h-4 md:w-5 h-5 ${isTimerWarning ? 'text-red-500' : 'text-cyan-500'}`} />
-              <span className="tabular-nums">{timeRemaining}s</span>
+              <Clock className={`w-3.5 h-3.5 md:w-5 md:h-5 ${isTimerWarning ? 'text-red-500' : 'text-cyan-500'}`} />
+              <span className="tabular-nums">{timeRemaining}ث</span>
             </motion.div>
           </div>
         </div>
@@ -96,7 +96,7 @@ export function GameHeader({
         {/* Bottom Row: Animated Progress Bar */}
         <div className="relative h-2 bg-muted rounded-full overflow-hidden border border-border">
           <motion.div
-            className="absolute top-0 left-0 h-full bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600"
+            className="absolute top-0 right-0 h-full bg-gradient-to-l from-cyan-400 via-blue-500 to-purple-600"
             initial={{ width: 0 }}
             animate={{ width: `${progress}%` }}
             transition={{ duration: 0.8, ease: [0.34, 1.56, 0.64, 1] }}

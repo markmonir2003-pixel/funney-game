@@ -28,6 +28,15 @@ export const metadata: Metadata = {
 
 import { ThemeProvider } from '@/components/theme-provider'
 import { Header } from '@/components/Header'
+import { Cairo } from 'next/font/google'
+import { AccessibilityProvider } from '@/hooks/useAccessibility'
+
+const cairo = Cairo({
+  subsets: ['arabic'],
+  weight: ['300', '400', '500', '600', '700', '800', '900'],
+  display: 'swap',
+  variable: '--font-cairo',
+})
 
 export default function RootLayout({
   children,
@@ -36,26 +45,24 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
-      <html lang="ar" dir="rtl" suppressHydrationWarning>
-        <head>
-          <link rel="preconnect" href="https://fonts.googleapis.com" />
-          <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-          <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
-        </head>
-        <body className="font-arabic antialiased min-h-screen">
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="dark"
-            enableSystem
-            disableTransitionOnChange
-          >
-            <div className="fixed inset-0 bg-background pointer-events-none" />
-          <div className="relative z-0 pt-20">
-            <Header />
-            {children}
-          </div>
-            {process.env.NODE_ENV === 'production' && <Analytics />}
-          </ThemeProvider>
+      <html lang="ar" dir="rtl" className={cairo.variable} suppressHydrationWarning>
+        <head />
+        <body className="font-arabic antialiased min-h-screen" suppressHydrationWarning>
+          <AccessibilityProvider>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="dark"
+              enableSystem
+              disableTransitionOnChange
+            >
+              <div className="fixed inset-0 bg-background pointer-events-none" />
+              <div className="relative z-0 pt-20">
+                <Header />
+                {children}
+              </div>
+            </ThemeProvider>
+          </AccessibilityProvider>
+          {process.env.NODE_ENV === 'production' && <Analytics />}
         </body>
       </html>
     </ClerkProvider>

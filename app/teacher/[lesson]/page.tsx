@@ -12,7 +12,9 @@ import {
   CustomLesson,
   CustomQuestion
 } from "@/lib/teacherStorage";
-import { ArrowLeft, Plus, Trash2, CheckCircle2, AlertCircle, Save } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, CheckCircle2, AlertCircle, Save, Sparkles } from "lucide-react";
+import { AIGeneratorModal } from "@/components/AIGeneratorModal";
+import { toast } from "sonner";
 
 export default function QuestionEditor() {
   const params = useParams();
@@ -21,6 +23,12 @@ export default function QuestionEditor() {
   
   const [lesson, setLesson] = useState<CustomLesson | null>(null);
   const [isAdding, setIsAdding] = useState(false);
+  const [isGeneratingAI, setIsGeneratingAI] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+  
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
   
   // New Question Form State
   const [newQText, setNewQText] = useState("");
@@ -30,11 +38,12 @@ export default function QuestionEditor() {
   const [explanation, setExplanation] = useState("");
 
   useEffect(() => {
+    if (!isMounted) return;
     const data = getTeacherData();
     const found = data.find(l => l.id === lessonId);
     if (found) setLesson(found);
     else router.push("/teacher");
-  }, [lessonId, router]);
+  }, [lessonId, router, isMounted]);
 
   const handleAddQuestion = (e: React.FormEvent) => {
     e.preventDefault();
@@ -77,7 +86,27 @@ export default function QuestionEditor() {
     setOptions(newOptions);
   };
 
-  if (!lesson) return null;
+  const handleAIGenerated = (newQuestions: any[]) => {
+    newQuestions.forEach(q => {
+      addQuestionToLesson(lessonId, {
+        lessonName: lesson?.name || "",
+        questionText: q.questionText,
+        options: q.options,
+        correctAnswer: q.correctAnswer,
+        difficulty: q.difficulty,
+        explanation: q.explanation
+      });
+    });
+
+    // Refresh lesson data
+    const data = getTeacherData();
+    const found = data.find(l => l.id === lessonId);
+    if (found) setLesson(found);
+    
+    toast.success(`تمت إضافة ${newQuestions.length} سؤال جديد!`);
+  };
+
+  if (!isMounted || !lesson) return null;
 
   return (
     <main className="min-h-screen bg-[#0f172a] text-slate-200 p-4 md:p-8">
@@ -96,12 +125,21 @@ export default function QuestionEditor() {
               <p className="text-sm md:text-base text-slate-400 font-medium">إدارة الأسئلة ({lesson.questions.length})</p>
             </div>
           </div>
-          <Button 
-            onClick={() => setIsAdding(true)}
-            className="w-full md:w-auto bg-purple-600 hover:bg-purple-700 h-12 rounded-xl font-bold"
-          >
-            <Plus className="w-5 h-5 ml-2" /> إضافة سؤال
-          </Button>
+          <div className="flex gap-3">
+            <Button 
+              onClick={() => setIsGeneratingAI(true)}
+              variant="outline"
+              className="w-full md:w-auto border-cyan-500/30 hover:bg-cyan-500/10 h-12 rounded-xl font-bold text-cyan-400 gap-2"
+            >
+              <Sparkles className="w-5 h-5" /> توليد بالذكاء الاصطناعي
+            </Button>
+            <Button 
+              onClick={() => setIsAdding(true)}
+              className="w-full md:w-auto bg-purple-600 hover:bg-purple-700 h-12 rounded-xl font-bold"
+            >
+              <Plus className="w-5 h-5 ml-2" /> إضافة سؤال
+            </Button>
+          </div>
         </header>
 
         <AnimatePresence>
@@ -235,6 +273,12 @@ export default function QuestionEditor() {
             ))
           )}
         </div>
+
+        <AIGeneratorModal 
+          isOpen={isGeneratingAI} 
+          onClose={() => setIsGeneratingAI(false)} 
+          onQuestionsGenerated={handleAIGenerated} 
+        />
       </div>
     </main>
   );

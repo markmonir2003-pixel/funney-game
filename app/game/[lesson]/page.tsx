@@ -9,6 +9,7 @@ import { ResultsCard } from "@/components/ResultsCard";
 import { MazeProgress } from "@/components/MazeProgress";
 import { Button } from "@/components/ui/button";
 import { useGameState } from "@/hooks/useGameState";
+import { useAccessibility } from "@/hooks/useAccessibility";
 import {
   calculateXP,
   calculateAccuracy,
@@ -47,6 +48,7 @@ export default function GamePage() {
   const { sync } = useSyncProgress();
   const { user } = useUser();
   const [lessonName, setLessonName] = useState(lessonParam);
+  const { settings, speak } = useAccessibility();
 
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(true);
@@ -137,10 +139,27 @@ export default function GamePage() {
 
   const { play } = useSound();
 
-  const handleUsePowerup = (type: "freeze" | "shield" | "skip") => {
+  const handleSelectAnswer = useCallback((index: number) => {
+    if (!state.answered) {
+      if (index === currentQuestion?.correctAnswer) {
+        play("correct");
+      } else {
+        play("wrong");
+        if (currentQuestion) trackMistake(currentQuestion.questionText);
+      }
+      selectAnswer(index);
+    }
+  }, [state.answered, currentQuestion, play, selectAnswer]);
+
+  const handleTimeout = useCallback(() => {
+    play("wrong");
+    selectAnswer(-1);
+  }, [selectAnswer, play]);
+
+  const handleUsePowerup = useCallback((type: "freeze" | "shield" | "skip") => {
     if (usePowerup(type)) {
       play("powerup");
-      setPowerups({ ...powerups, [type]: powerups[type] - 1 });
+      setPowerups(prev => ({ ...prev, [type]: prev[type] - 1 }));
       if (type === "freeze") {
          setTimeRemaining(prev => prev + 10);
       } else if (type === "skip") {
@@ -149,7 +168,7 @@ export default function GamePage() {
          alert("تم تفعيل الدرع! أنت بأمان في هذا السؤال.");
       }
     }
-  };
+  }, [play, setTimeRemaining, currentQuestion, handleSelectAnswer]);
 
   // Timer effect
   useEffect(() => {
@@ -163,26 +182,9 @@ export default function GamePage() {
     if (state.timeRemaining === 0 && !state.answered && !isGameOver) {
       handleTimeout();
     }
-  }, [state.timeRemaining, state.answered, isGameOver, decrementTime]);
+  }, [state.timeRemaining, state.answered, isGameOver, decrementTime, handleTimeout]);
 
-  const handleTimeout = useCallback(() => {
-    play("wrong");
-    selectAnswer(-1);
-  }, [selectAnswer, play]);
-
-  const handleSelectAnswer = (index: number) => {
-    if (!state.answered) {
-      if (index === currentQuestion?.correctAnswer) {
-        play("correct");
-      } else {
-        play("wrong");
-        if (currentQuestion) trackMistake(currentQuestion.questionText);
-      }
-      selectAnswer(index);
-    }
-  };
-
-  const handleNextQuestion = () => {
+  const handleNextQuestion = useCallback(() => {
     if (!currentQuestion) return;
     play("click");
 
@@ -197,7 +199,7 @@ export default function GamePage() {
       : 0;
 
     nextQuestion(xpEarned);
-  };
+  }, [currentQuestion, play, state.selectedAnswer, state.comboStreak, state.timeRemaining, nextQuestion]);
 
   useEffect(() => {
     if (isGameOver && !gameEnded) {
@@ -245,14 +247,14 @@ export default function GamePage() {
     setGameEnded(true);
   };
 
-  const handleRetry = () => {
+  const handleRetry = useCallback(() => {
     resetGame();
     setGameEnded(false);
-  };
+  }, [resetGame]);
 
-  const handleBackToLessons = () => {
+  const handleBackToLessons = useCallback(() => {
     router.push("/lessons");
-  };
+  }, [router]);
 
   if (loading) {
     return (

@@ -1,10 +1,12 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Zap, Flame, Clock, Target, LogIn } from "lucide-react";
+import { Zap, Flame, Clock, Target, LogIn, Accessibility } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
 import { UserButton, SignInButton, useAuth } from "@clerk/nextjs";
 import { Button } from "./ui/button";
+import { useState } from "react";
+import { AccessibilityMenu } from "./AccessibilityMenu";
 
 interface GameHeaderProps {
   xp: number;
@@ -21,6 +23,7 @@ export function GameHeader({
   totalQuestions,
   timeRemaining,
 }: GameHeaderProps) {
+  const [showAccessibility, setShowAccessibility] = useState(false);
   const { isSignedIn, isLoaded } = useAuth();
   const progress = (currentQuestion / totalQuestions) * 100;
   const isTimerWarning = timeRemaining <= 10;
@@ -54,6 +57,15 @@ export function GameHeader({
           </div>
 
           <div className="flex items-center gap-1.5 md:gap-4">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setShowAccessibility(true)}
+              className="rounded-xl hover:bg-blue-500/10 text-blue-500 flex"
+              title="إعدادات الوصول"
+            >
+              <Accessibility className="w-5 h-5 md:w-6 md:h-6" />
+            </Button>
             <ThemeToggle />
             
             {isLoaded && (
@@ -103,6 +115,8 @@ export function GameHeader({
           />
         </div>
       </div>
+
+      <AccessibilityMenu isOpen={showAccessibility} onClose={() => setShowAccessibility(false)} />
     </div>
   );
 }

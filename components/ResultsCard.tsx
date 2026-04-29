@@ -7,8 +7,12 @@ import { getStarRating, getMotivationalMessage } from "@/lib/gameLogic";
 import { Trophy, RefreshCcw, Home, Star, Zap, Skull, Award, ScrollText } from "lucide-react";
 import { checkAchievements } from "@/lib/storage";
 import { useSound } from "@/hooks/useSound";
-import { CertificateModal } from "./CertificateModal";
 import { useUser } from "@clerk/nextjs";
+import dynamic from "next/dynamic";
+
+const CertificateModal = dynamic(() => import("./CertificateModal").then(mod => mod.CertificateModal), {
+  ssr: false,
+});
 
 interface ResultsCardProps {
   score: number;

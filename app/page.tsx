@@ -8,7 +8,11 @@ import { GraduationCap, Play, Sparkles, Trophy, BookOpen, Star, LayoutDashboard,
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { UserButton, SignInButton, SignedIn, SignedOut } from "@clerk/nextjs";
 import { useSyncProgress } from "@/hooks/useSyncProgress";
-import { TutorialModal } from "@/components/TutorialModal";
+import dynamic from "next/dynamic";
+
+const TutorialModal = dynamic(() => import("@/components/TutorialModal").then(mod => mod.TutorialModal), {
+  ssr: false,
+});
 
 export default function Home() {
   useSyncProgress(); // Trigger cloud fetch on mount if signed in

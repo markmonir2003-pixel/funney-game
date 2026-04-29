@@ -26,20 +26,61 @@ export function CertificateModal({
 
   const handlePrint = () => {
     const printContent = certificateRef.current;
-    const originalContents = document.body.innerHTML;
-    
-    if (printContent) {
-        document.body.innerHTML = printContent.innerHTML;
-        window.print();
-        document.body.innerHTML = originalContents;
-        window.location.reload(); // Reload to restore React state
-    }
+    if (!printContent) return;
+
+    // Create a hidden iframe
+    const iframe = document.createElement('iframe');
+    iframe.style.position = 'absolute';
+    iframe.style.top = '-10000px';
+    iframe.style.left = '-10000px';
+    document.body.appendChild(iframe);
+
+    const doc = iframe.contentWindow?.document;
+    if (!doc) return;
+
+    // Get all styles from the current document to apply to the iframe
+    const styles = Array.from(document.querySelectorAll('style, link[rel="stylesheet"]'))
+      .map(el => el.outerHTML)
+      .join('\n');
+
+    doc.open();
+    doc.write(`
+      <html>
+        <head>
+          <title>Certificate</title>
+          ${styles}
+          <style>
+            @page { size: A4 portrait; margin: 0; }
+            body { margin: 0; padding: 0; background: white !important; font-family: 'Cairo', sans-serif; }
+            .printable-certificate { width: 100%; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 40px; box-sizing: border-box; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+          </style>
+        </head>
+        <body dir="rtl">
+          <div class="printable-certificate">
+            ${printContent.innerHTML}
+          </div>
+          <script>
+            setTimeout(() => {
+              window.print();
+              window.close();
+            }, 500);
+          <\/script>
+        </body>
+      </html>
+    `);
+    doc.close();
+
+    // Remove iframe after printing
+    setTimeout(() => {
+      document.body.removeChild(iframe);
+    }, 2000);
   };
 
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-[150] flex items-center justify-center p-2 sm:p-4 overflow-y-auto">
+        <div className="fixed inset-0 z-[150] flex items-center justify-center p-2 sm:p-4 overflow-y-auto print:hidden">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -74,7 +115,7 @@ export function CertificateModal({
             </div>
 
             {/* Certificate Content */}
-            <div ref={certificateRef} className="p-0.5 sm:p-1 max-h-[90vh] overflow-y-auto md:max-h-none md:overflow-visible">
+            <div ref={certificateRef} className="printable-certificate p-0.5 sm:p-1 max-h-[90vh] overflow-y-auto md:max-h-none md:overflow-visible">
                 <div className="bg-white border-[8px] md:border-[16px] border-double border-slate-200 p-6 sm:p-10 md:p-20 relative overflow-hidden">
                     {/* Decorative Elements */}
                     <div className="absolute top-0 right-0 w-32 h-32 md:w-64 md:h-64 bg-slate-50 rounded-full -mr-16 -mt-16 md:-mr-32 md:-mt-32 border-[20px] md:border-[40px] border-slate-100" />

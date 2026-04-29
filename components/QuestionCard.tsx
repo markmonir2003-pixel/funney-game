@@ -2,7 +2,9 @@
 
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, XCircle, ChevronRight, Zap, Target, Brain } from "lucide-react";
+import { CheckCircle2, XCircle, ChevronRight, Zap, Target, Brain, Volume2, Eye, Activity } from "lucide-react";
+import { useAccessibility } from "@/hooks/useAccessibility";
+import { useEffect } from "react";
 
 interface Question {
   id: number | string;
@@ -28,6 +30,43 @@ export function QuestionCard({
   onSelectAnswer,
   onNext,
 }: QuestionCardProps) {
+  const { settings, speak } = useAccessibility();
+
+  // Speak question on load
+  useEffect(() => {
+    if (settings.textToSpeech && !answered) {
+      const optionsText = question.options.map((opt, i) => `الخيار ${["الأول", "التاني", "التالت", "الرابع"][i]}: ${opt}`).join(", ");
+      const textToSpeak = `بص يا بطل، السؤال بيقول: ${question.questionText}, , وعندك الخيارات ديه: , ${optionsText}`;
+      speak(textToSpeak);
+    }
+  }, [question, settings.textToSpeech, speak, answered]);
+
+  // Speak feedback on answer
+  useEffect(() => {
+    if (answered && settings.textToSpeech) {
+      if (selectedAnswer === question.correctAnswer) {
+        speak(`عاش يا بطل! إجابة صح، وزودت نقطك وخبرتك!`);
+      } else {
+        speak(`للأسف الإجابة مش صح، فكر تاني وجرب في السؤال الجاي.`);
+      }
+    }
+  }, [answered, selectedAnswer, question.correctAnswer, settings.textToSpeech, speak]);
+
+  const getFontSizeClass = () => {
+    switch (settings.fontSize) {
+      case "large": return "text-3xl md:text-5xl";
+      case "extra-large": return "text-4xl md:text-6xl";
+      default: return "text-2xl md:text-4xl";
+    }
+  };
+
+  const getOptionSizeClass = () => {
+    switch (settings.fontSize) {
+      case "large": return "text-lg md:text-xl";
+      case "extra-large": return "text-xl md:text-2xl";
+      default: return "text-base md:text-lg";
+    }
+  };
   const getDifficultyStyles = (difficulty: string) => {
     switch (difficulty) {
       case "easy":
@@ -50,7 +89,7 @@ export function QuestionCard({
       animate={{ opacity: 1, scale: 1 }}
       key={question.id}
     >
-      <div className="relative bg-card backdrop-blur-2xl border border-border rounded-[2rem] md:rounded-[2.5rem] p-5 md:p-8 shadow-2xl overflow-hidden">
+      <div className={`relative bg-card backdrop-blur-2xl border ${settings.highContrast ? 'border-foreground border-4 bg-black' : 'border-border'} rounded-[2rem] md:rounded-[2.5rem] p-5 md:p-8 shadow-2xl overflow-hidden`}>
         {/* Subtle decorative glow */}
         <div className={`absolute top-0 right-0 w-64 h-64 ${diff.bg} blur-[100px] pointer-events-none opacity-20`} />
 
@@ -69,7 +108,7 @@ export function QuestionCard({
           </div>
 
           {/* Question text */}
-          <h2 className="text-2xl md:text-4xl font-black text-foreground mb-6 md:mb-10 leading-tight tracking-tight">
+          <h2 className={`${getFontSizeClass()} font-black text-foreground mb-6 md:mb-10 leading-tight tracking-tight`}>
             {question.questionText}
           </h2>
 
@@ -104,13 +143,33 @@ export function QuestionCard({
                 >
                   <div className="flex items-center gap-3 md:gap-4">
                     <div className={`w-8 h-8 md:w-10 md:h-10 rounded-lg md:rounded-xl flex items-center justify-center font-black text-base md:text-lg shrink-0 ${
-                      !answered ? 'bg-muted border border-border text-muted-foreground' :
+                      !answered ? (settings.highContrast ? 'bg-white text-black' : 'bg-muted border border-border text-muted-foreground') :
                       isCorrect ? 'bg-green-500 text-white' :
                       isSelected ? 'bg-red-500 text-white' : 'bg-muted text-muted-foreground'
                     }`}>
                       {["أ", "ب", "ج", "د"][index]}
                     </div>
-                    <span className="flex-1 font-bold text-base md:text-lg">{option}</span>
+                    <span className={`flex-1 font-bold ${getOptionSizeClass()}`}>{option}</span>
+                    {settings.visualCues && isCorrect && answered && (
+                      <motion.div 
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        className="flex items-center gap-1 bg-green-500/20 px-2 py-1 rounded-full mr-2"
+                      >
+                        <Activity className="w-3 h-3 text-green-500 animate-pulse" />
+                        <span className="text-[8px] font-black text-green-500 uppercase">صوت نجاح</span>
+                      </motion.div>
+                    )}
+                    {settings.visualCues && showIncorrect && (
+                      <motion.div 
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        className="flex items-center gap-1 bg-red-500/20 px-2 py-1 rounded-full mr-2"
+                      >
+                        <Activity className="w-3 h-3 text-red-500 animate-bounce" />
+                        <span className="text-[8px] font-black text-red-500 uppercase">صوت خطأ</span>
+                      </motion.div>
+                    )}
                     {showCorrect && <CheckCircle2 className="w-5 h-5 md:w-6 md:h-6 text-green-500" />}
                     {showIncorrect && <XCircle className="w-5 h-5 md:w-6 md:h-6 text-red-500" />}
                   </div>

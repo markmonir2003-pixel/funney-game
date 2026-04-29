@@ -34,13 +34,20 @@ export default function TeacherPortal() {
   const [globalScores, setGlobalScores] = useState<any[]>([]);
   const [isLoadingScores, setIsLoadingScores] = useState(false);
   const { userId } = useAuth();
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isMounted) return;
+
     const localLessons = getTeacherData();
     setLessons(localLessons);
     
     const data = getStorageData();
-    if (data.mistakeTracker) {
+    if (data && data.mistakeTracker) {
       const sortedMistakes = Object.entries(data.mistakeTracker)
         .sort((a, b) => b[1] - a[1])
         .slice(0, 5);
@@ -50,7 +57,7 @@ export default function TeacherPortal() {
     if (activeTab === "analytics") {
       fetchGlobalScores();
     }
-  }, [activeTab]);
+  }, [activeTab, isMounted]);
 
   const fetchGlobalScores = async () => {
     setIsLoadingScores(true);
@@ -106,6 +113,8 @@ export default function TeacherPortal() {
     navigator.clipboard.writeText(url);
     toast.success("Short cloud link copied to clipboard!");
   };
+
+  if (!isMounted) return null;
 
   return (
     <main className="min-h-screen bg-background text-foreground p-4 md:p-8 relative selection:bg-purple-500/30">

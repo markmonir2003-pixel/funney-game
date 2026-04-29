@@ -221,19 +221,19 @@ export default function Home() {
 
         {/* Footer/Trust */}
         <motion.div variants={itemVariants} className="pt-8 flex flex-col items-center gap-6">
-          <div className="h-px w-24 bg-slate-800" />
-          <p className="text-slate-500 font-medium tracking-tight">
+          <div className="h-px w-24 bg-border" />
+          <p className="text-muted-foreground font-medium tracking-tight">
             مثالية للفصول الدراسية التفاعلية والتعلم الممتع
           </p>
           <div className="flex gap-8 opacity-40 grayscale hover:grayscale-0 transition-all">
              {/* Simple shapes to act as logo placeholders */}
              <div className="flex items-center gap-2">
                 <div className="w-6 h-6 bg-cyan-500 rounded-full" />
-                <span className="text-white font-bold">تعليم ممتع</span>
+                <span className="text-foreground font-bold">تعليم ممتع</span>
              </div>
              <div className="flex items-center gap-2">
                 <div className="w-6 h-6 bg-purple-500 rotate-45" />
-                <span className="text-white font-bold">تحدي المعرفة</span>
+                <span className="text-foreground font-bold">تحدي المعرفة</span>
              </div>
           </div>
         </motion.div>

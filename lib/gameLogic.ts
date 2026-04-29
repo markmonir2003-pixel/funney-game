@@ -178,3 +178,17 @@ export function getLessonColor(lessonName: string): string {
 
   return colors[lessonName] || "from-gray-500 to-gray-600";
 }
+
+export const SKINS = [
+  { id: "default", name: "بطل قياسي", emoji: "😊", cost: 0, color: "bg-cyan-400" },
+  { id: "ninja", name: "نينجا سايبر", emoji: "🥷", cost: 1000, color: "bg-slate-800" },
+  { id: "robot", name: "روبوت المنطق", emoji: "🤖", cost: 2500, color: "bg-purple-500" },
+  { id: "rocket", name: "صاروخ سريع", emoji: "🚀", cost: 5000, color: "bg-orange-500" },
+  { id: "king", name: "ملك الذهب", emoji: "👑", cost: 10000, color: "bg-yellow-400" },
+  { id: "wizard", name: "ساحر الأكواد", emoji: "🧙‍♂️", cost: 25000, color: "bg-indigo-500" },
+  { id: "dragon", name: "تنين البيانات", emoji: "🐉", cost: 50000, color: "bg-red-600" },
+  { id: "alien", name: "كائن فضائي", emoji: "👽", cost: 100000, color: "bg-lime-500" },
+  { id: "superhero", name: "بطل خارق", emoji: "🦸‍♂️", cost: 250000, color: "bg-blue-600" },
+  { id: "hacker", name: "هاكر محترف", emoji: "💻", cost: 500000, color: "bg-green-500" },
+  { id: "god", name: "أسطورة البرمجة", emoji: "🌌", cost: 1000000, color: "bg-gradient-to-r from-violet-600 via-fuchsia-600 to-orange-600" },
+];

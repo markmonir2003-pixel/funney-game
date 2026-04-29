@@ -28,14 +28,7 @@ import {
   checkAchievements,
   saveStorageData
 } from "@/lib/storage";
-
-const SKINS = [
-  { id: "default", name: "بطل قياسي", icon: "Smile", cost: 0, color: "bg-cyan-400" },
-  { id: "ninja", name: "نينجا سايبر", icon: "Ghost", cost: 1000, color: "bg-slate-800" },
-  { id: "robot", name: "روبوت المنطق", icon: "Bot", cost: 2500, color: "bg-purple-500" },
-  { id: "rocket", name: "صاروخ سريع", icon: "Rocket", cost: 5000, color: "bg-orange-500" },
-  { id: "king", name: "ملك الذهب", icon: "Crown", cost: 10000, color: "bg-yellow-400" },
-];
+import { SKINS } from "@/lib/gameLogic";
 
 const ACHIEVEMENT_LIST = [
   { id: "newbie", name: "الخطوات الأولى", desc: "اكسب 100 نقطة", icon: "🌱" },
@@ -149,8 +142,8 @@ export default function ShopPage() {
               {SKINS.map((skin) => (
                 <div key={skin.id} className={`relative p-6 md:p-8 rounded-[2rem] md:rounded-[2.5rem] border-4 transition-all duration-300 ${selectedSkin === skin.id ? 'bg-primary/5 border-primary shadow-2xl' : 'bg-card border-border shadow-sm'}`}>
                   {selectedSkin === skin.id && <div className="absolute -top-3 -left-3 bg-primary text-primary-foreground px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg">مجهّز</div>}
-                  <div className={`w-32 h-32 ${skin.color} rounded-full mx-auto mb-8 border-8 border-white/20 shadow-2xl flex items-center justify-center text-4xl`}>
-                     {skin.id === "ninja" ? "🥷" : skin.id === "robot" ? "🤖" : skin.id === "rocket" ? "🚀" : skin.id === "king" ? "👑" : "😊"}
+                  <div className={`w-32 h-32 ${skin.color} rounded-full mx-auto mb-8 border-8 border-white/20 shadow-2xl flex items-center justify-center text-5xl`}>
+                     {skin.emoji}
                   </div>
                   <h3 className="text-xl md:text-2xl font-black text-center mb-6">{skin.name}</h3>
                   {!unlockedSkins.includes(skin.id) ? (

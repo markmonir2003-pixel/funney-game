@@ -4,9 +4,38 @@ import { ClerkProvider } from '@clerk/nextjs'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Play 2 Learn - تعلم أساسيات البرمجة',
-  description: 'لعبة تعليمية تفاعلية لطلاب الصف الأول الثانوي لتعلم أساسيات البرمجة. أتقن الخوارزميات والمتغيرات والحلقات والمزيد من خلال التحديات الممتعة.',
-  generator: 'v0.app',
+  title: "Play 2 Learn | عالم البرمجة للأبطال",
+  description: "منصة تعليمية تفاعلية لتعليم الأطفال والشباب أساسيات البرمجة من خلال الألعاب والتحديات الممتعة.",
+  keywords: ["تعليم البرمجة", "ألعاب تعليمية", "أكواد", "برمجة للأطفال", "تعلم البرمجة بالعربي"],
+  authors: [{ name: "Play 2 Learn Team" }],
+  viewport: "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0",
+  themeColor: "#06b6d4",
+  openGraph: {
+    type: "website",
+    locale: "ar_EG",
+    url: "https://play2learn.com",
+    title: "Play 2 Learn | العب وتعلم البرمجة",
+    description: "انضم لأبطال البرمجة اليوم وابدأ رحلتك في تعلم الخوارزميات والأكواد بطريقة ممتعة!",
+    siteName: "Play 2 Learn",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Play 2 Learn Dashboard",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Play 2 Learn | العب وتعلم البرمجة",
+    description: "أفضل منصة لتعلم البرمجة من خلال الألعاب التفاعلية.",
+    images: ["/og-image.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
   icons: {
     icon: [
       {
@@ -26,10 +55,19 @@ export const metadata: Metadata = {
   },
 }
 
+export const viewport = {
+  themeColor: '#06b6d4',
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+}
+
 import { ThemeProvider } from '@/components/theme-provider'
 import { Header } from '@/components/Header'
 import { Cairo } from 'next/font/google'
 import { AccessibilityProvider } from '@/hooks/useAccessibility'
+import { Toaster } from '@/components/ui/sonner'
 
 const cairo = Cairo({
   subsets: ['arabic'],
@@ -46,7 +84,17 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="ar" dir="rtl" className={cairo.variable} suppressHydrationWarning>
-        <head />
+        <head>
+          <link rel="preconnect" href="https://fonts.googleapis.com" />
+          <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+          <link rel="preconnect" href="https://clerk.play2learn.com" />
+          <link rel="preconnect" href="https://supabase.co" />
+          <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+          <link rel="dns-prefetch" href="https://clerk.play2learn.com" />
+          <link rel="dns-prefetch" href="https://va.vercel-scripts.com" />
+          <link rel="manifest" href="/manifest.json" />
+          <link rel="apple-touch-icon" href="/icon-192.png" />
+        </head>
         <body className="font-arabic antialiased min-h-screen" suppressHydrationWarning>
           <AccessibilityProvider>
             <ThemeProvider
@@ -62,6 +110,7 @@ export default function RootLayout({
               </div>
             </ThemeProvider>
           </AccessibilityProvider>
+          <Toaster position="top-center" richColors />
           {process.env.NODE_ENV === 'production' && <Analytics />}
         </body>
       </html>

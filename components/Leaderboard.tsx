@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { Trophy, Medal, Crown, Star } from "lucide-react";
 import { getLeaderboard } from "@/lib/storage";
+import { SKINS } from "@/lib/gameLogic";
 import { useEffect, useState } from "react";
 
 export function Leaderboard() {
@@ -45,7 +46,7 @@ export function Leaderboard() {
                 </div>
 
                 <div className="w-12 h-12 rounded-full bg-muted border border-border flex items-center justify-center text-xl shadow-inner">
-                   {user.avatar === "ninja" ? "🥷" : user.avatar === "robot" ? "🤖" : user.avatar === "rocket" ? "🚀" : user.avatar === "king" ? "👑" : "👤"}
+                   {SKINS.find(s => s.id === user.avatar)?.emoji || "👤"}
                 </div>
 
                 <div className="flex-1">

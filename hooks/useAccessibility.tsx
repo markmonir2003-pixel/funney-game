@@ -44,58 +44,143 @@ export function AccessibilityProvider({ children }: { children: React.ReactNode 
     setSettings(prev => {
       const newSettings = { ...prev, [key]: value };
       localStorage.setItem(STORAGE_KEY, JSON.stringify(newSettings));
+      
+      // Stop speaking immediately if textToSpeech is turned off
+      if (key === "textToSpeech" && !value && typeof window !== "undefined") {
+        window.speechSynthesis.cancel();
+      }
+      
       return newSettings;
     });
   }, []);
+
+  const currentSpeechId = React.useRef(0);
 
   const speak = useCallback((text: string) => {
     if (!settings.textToSpeech || typeof window === "undefined") return;
     
     window.speechSynthesis.cancel();
-
-    // Phonetic cleaning for better Arabic pronunciation without reading 'dots'
-    let cleanText = text
-      .replace(/([0-9]+)/g, " $1 ") // Add spaces around numbers
-      .replace(/[?؟]/g, "؟ , , ") // Use commas for pauses instead of dots
-      .replace(/[:]/g, ": , ") // Pause for colons
-      .replace(/[-]/g, " - ") // Pause for dashes
-      .replace(/\.\s*\.\s*\./g, " , ") // Replace triple dots with a comma pause
-      .replace(/\./g, " , "); // Replace single dots with comma for better flow
-
-    const utterance = new SpeechSynthesisUtterance(cleanText);
     
+    currentSpeechId.current += 1;
+    const mySpeechId = currentSpeechId.current;
+
     const voices = window.speechSynthesis.getVoices();
+
+    // Array of the absolute best Arabic voices available on browsers (Edge/Chrome/Mac)
+    const premiumArabicVoices = [
+      "Microsoft Hamed Online", // Edge/Windows Best Male (Saudi)
+      "Microsoft Salma Online", // Edge/Windows Best Female (Egypt)
+      "Microsoft Shakir Online", // Edge/Windows Best Male (Egypt)
+      "Microsoft Zariyah Online", // Edge/Windows Best Female (UAE)
+      "Google العربية", // Chrome Best
+      "Maged", // Mac Best Male
+      "Tarik", // Mac Alternate Male
+      "Laila", // Mac Best Female
+    ];
     
-    // Priority: 1. Microsoft Neural Male 2. Google Male 3. Any Male Arabic 4. Fallback Arabic
-    let selectedVoice = voices.find(v => 
-      (v.lang.startsWith("ar") && (v.name.includes("Male") || v.name.includes("Hamza") || v.name.includes("Shakir")))
-    );
-    
-    // If no specific male voice found, try the best neural/google voices regardless of gender
-    if (!selectedVoice) {
-      selectedVoice = voices.find(v => 
-        (v.name.includes("Neural") && v.lang.includes("ar")) || 
-        (v.name.includes("Google") && v.lang.includes("ar"))
-      );
+    let arabicVoice;
+    for (const name of premiumArabicVoices) {
+      arabicVoice = voices.find(v => v.lang.startsWith("ar") && v.name.includes(name));
+      if (arabicVoice) break;
     }
-    
-    if (!selectedVoice) {
-      selectedVoice = voices.find(v => v.lang.startsWith("ar"));
+
+    if (!arabicVoice) {
+      arabicVoice = voices.find(v => 
+        v.lang.startsWith("ar") && (v.name.toLowerCase().includes("neural") || v.name.toLowerCase().includes("online"))
+      ) || voices.find(v => v.lang.startsWith("ar"));
     }
-    
-    if (selectedVoice) {
-      utterance.voice = selectedVoice;
-      utterance.lang = selectedVoice.lang;
-    } else {
-      utterance.lang = "ar-EG";
+
+    const premiumEnglishVoices = [
+      "Microsoft Aria Online",
+      "Microsoft Guy Online", 
+      "Google US English",
+      "Samantha",
+      "Alex"
+    ];
+
+    let englishVoice;
+    for (const name of premiumEnglishVoices) {
+      englishVoice = voices.find(v => v.lang.startsWith("en") && v.name.includes(name));
+      if (englishVoice) break;
     }
-    
-    // Professional tuning for a clear male voice
-    utterance.rate = 0.92; // Slightly faster but still very clear
-    utterance.pitch = 0.95; // Lower pitch for a more natural male sound
-    utterance.volume = 1.0;
-    
-    window.speechSynthesis.speak(utterance);
+
+    if (!englishVoice) {
+      englishVoice = voices.find(v => 
+        v.lang.startsWith("en") && (v.name.toLowerCase().includes("neural") || v.name.toLowerCase().includes("online"))
+      ) || voices.find(v => v.lang.startsWith("en-US")) || voices.find(v => v.lang.startsWith("en"));
+    }
+
+    // Split text into Arabic and English segments based on English letters
+    const chunks = text.split(/([a-zA-Z][a-zA-Z0-9_.,()[\]{}<>=:;'"\s]*[a-zA-Z0-9_)]|[a-zA-Z])/g).filter(Boolean);
+
+    let currentChunkIndex = 0;
+
+    const playNextChunk = () => {
+      // Abort if a new speak() was called
+      if (currentSpeechId.current !== mySpeechId) return;
+
+      if (currentChunkIndex >= chunks.length) return;
+
+      let chunk = chunks[currentChunkIndex];
+      currentChunkIndex++;
+
+      let cleanChunk = chunk.trim();
+      if (!cleanChunk || cleanChunk === "," || cleanChunk === "،") {
+        playNextChunk();
+        return;
+      }
+
+      const isEnglish = /[a-zA-Z]/.test(cleanChunk);
+      
+      if (!isEnglish) {
+        cleanChunk = cleanChunk
+          .replace(/([0-9]+)/g, " $1 ")
+          .replace(/[?؟]/g, "؟ , , ")
+          .replace(/[:]/g, ": , ")
+          .replace(/[-]/g, " - ")
+          .replace(/\.\s*\.\s*\./g, " , ");
+      }
+
+      const utterance = new SpeechSynthesisUtterance(cleanChunk);
+
+      if (isEnglish) {
+        if (englishVoice) {
+          utterance.voice = englishVoice;
+          utterance.lang = englishVoice.lang;
+        } else {
+          utterance.lang = "en-US";
+        }
+        utterance.rate = 1.15; // Faster English reading
+        utterance.pitch = 1.0;
+      } else {
+        if (arabicVoice) {
+          utterance.voice = arabicVoice;
+          utterance.lang = arabicVoice.lang;
+        } else {
+          utterance.lang = "ar-SA";
+        }
+        utterance.rate = 1.30; // Faster Arabic reading
+        utterance.pitch = 0.98;
+      }
+      
+      utterance.volume = 1.0;
+      
+      utterance.onend = () => {
+        if (currentSpeechId.current === mySpeechId) {
+          playNextChunk();
+        }
+      };
+      utterance.onerror = (e) => {
+        if (currentSpeechId.current === mySpeechId) {
+          playNextChunk();
+        }
+      };
+
+      window.speechSynthesis.speak(utterance);
+    };
+
+    // Start playing the first chunk
+    playNextChunk();
   }, [settings.textToSpeech]);
 
   return (

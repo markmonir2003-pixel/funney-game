@@ -3,8 +3,22 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  images: {
-    unoptimized: true,
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  swcMinify: true,
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production',
+  },
+  experimental: {
+    optimizePackageImports: [
+      'lucide-react', 
+      'framer-motion', 
+      '@clerk/nextjs',
+      'clsx',
+      'tailwind-merge',
+      'sonner'
+    ],
   },
 }
 

@@ -3,6 +3,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Flag, Skull, Zap, Smile, Rocket, Cloud } from "lucide-react";
 import { memo } from "react";
+import { SKINS } from "@/lib/gameLogic";
 
 interface MazeProgressProps {
    currentStep: number;
@@ -38,17 +39,11 @@ export const MazeProgress = memo(function MazeProgress({
      if (status === "happy") return "🤩";
      if (status === "sad") return "😢";
      
-     switch(selectedSkin) {
-       case "ninja": return "🥷";
-       case "robot": return "🤖";
-       case "rocket": return "🚀";
-       case "king": return "👑";
-       default: return "😊";
-     }
+     return SKINS.find(s => s.id === selectedSkin)?.emoji || "😊";
    };
 
   return (
-    <div className="w-full max-w-4xl mx-auto px-4 py-6 md:py-12 relative overflow-hidden bg-slate-900/60 rounded-[2rem] md:rounded-[3.5rem] border border-slate-800 shadow-2xl backdrop-blur-md">
+    <div className="w-full max-w-4xl mx-auto px-4 py-6 md:py-12 relative overflow-hidden bg-card/80 rounded-[2rem] md:rounded-[3.5rem] border border-border shadow-2xl backdrop-blur-md">
       {/* Cartoon Background Elements */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <motion.div 

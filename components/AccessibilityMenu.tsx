@@ -53,7 +53,7 @@ export function AccessibilityMenu({ isOpen, onClose }: AccessibilityMenuProps) {
             initial="hidden"
             animate="visible"
             exit="hidden"
-            className="relative w-full max-w-lg bg-card/95 backdrop-blur-2xl border border-white/10 rounded-[2.5rem] shadow-[0_32px_64px_-12px_rgba(0,0,0,0.5)] overflow-hidden flex flex-col max-h-[85vh]"
+            className="relative w-full max-w-lg bg-card/95 backdrop-blur-2xl border border-border rounded-[2.5rem] shadow-[0_32px_64px_-12px_rgba(0,0,0,0.5)] overflow-hidden flex flex-col max-h-[85vh]"
           >
             <div className="p-5 md:p-8 space-y-6">
               <div className="flex items-center justify-between">
@@ -86,7 +86,7 @@ export function AccessibilityMenu({ isOpen, onClose }: AccessibilityMenuProps) {
                 </div>
 
                 {/* Typography */}
-                <div className="p-4 bg-muted/40 rounded-[1.5rem] border border-white/5 space-y-3">
+                <div className="p-4 bg-muted/40 rounded-[1.5rem] border border-border space-y-3">
                   <div className="flex items-center justify-between">
                     <Type className="w-5 h-5 text-cyan-400" />
                     <span className="text-sm font-bold">حجم الخط</span>
@@ -100,10 +100,10 @@ export function AccessibilityMenu({ isOpen, onClose }: AccessibilityMenuProps) {
                       <button
                         key={size.id}
                         onClick={() => updateSetting("fontSize", size.id)}
-                        className={`h-10 rounded-xl font-bold text-xs transition-all ${
+                        className={`h-10 rounded-xl font-bold text-xs transition-all border ${
                           settings.fontSize === size.id 
-                          ? "bg-white text-black shadow-lg" 
-                          : "bg-white/5 text-muted-foreground hover:bg-white/10"
+                          ? "bg-primary text-primary-foreground border-transparent shadow-lg" 
+                          : "bg-transparent text-muted-foreground hover:bg-muted border-border"
                         }`}
                       >
                         {size.label}
@@ -117,7 +117,7 @@ export function AccessibilityMenu({ isOpen, onClose }: AccessibilityMenuProps) {
                   className={`p-4 md:p-6 rounded-[2rem] border-2 transition-all duration-500 relative overflow-hidden group ${
                     settings.textToSpeech 
                     ? "bg-blue-600 border-blue-400 shadow-[0_20px_40px_-10px_rgba(37,99,235,0.4)]" 
-                    : "bg-muted/40 border-white/5 hover:border-white/20"
+                    : "bg-muted/40 border-border hover:border-primary/50 hover:bg-muted/60"
                   }`}
                   animate={!settings.textToSpeech ? { scale: [1, 1.01, 1] } : {}}
                   transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
@@ -126,12 +126,12 @@ export function AccessibilityMenu({ isOpen, onClose }: AccessibilityMenuProps) {
                     <button 
                       onClick={() => updateSetting("textToSpeech", !settings.textToSpeech)}
                       className={`relative w-12 h-6 md:w-14 md:h-7 rounded-full transition-colors duration-300 focus:outline-none shrink-0 ${
-                        settings.textToSpeech ? "bg-white" : "bg-white/10"
+                        settings.textToSpeech ? "bg-white" : "bg-slate-400/30"
                       }`}
                     >
                       <motion.div 
                         className={`absolute top-1 w-4 h-4 md:w-5 md:h-5 rounded-full shadow-sm ${
-                          settings.textToSpeech ? "bg-blue-600" : "bg-white/40"
+                          settings.textToSpeech ? "bg-blue-600" : "bg-white"
                         }`}
                         animate={{ x: settings.textToSpeech ? (typeof window !== 'undefined' && window.innerWidth < 640 ? -24 : -32) : -4 }}
                         transition={{ type: "spring", stiffness: 500, damping: 30 }}
@@ -145,15 +145,15 @@ export function AccessibilityMenu({ isOpen, onClose }: AccessibilityMenuProps) {
                           قراءة الأسئلة والخيارات
                         </Label>
                         <p className={`text-[9px] md:text-[11px] font-bold leading-tight ${
-                          settings.textToSpeech ? "text-white/80" : "text-blue-400"
+                          settings.textToSpeech ? "text-white/80" : "text-blue-500"
                         }`}>
                           {settings.textToSpeech ? "القارئ يعمل الآن.." : "اضغط هنا للتفعيل الصوتي"}
                         </p>
                       </div>
                       <div className={`w-10 h-10 md:w-12 md:h-12 rounded-2xl flex items-center justify-center shrink-0 transition-transform duration-500 group-hover:scale-110 ${
-                        settings.textToSpeech ? "bg-white/20" : "bg-blue-500/20"
+                        settings.textToSpeech ? "bg-white/20" : "bg-blue-500/10 border border-blue-500/20"
                       }`}>
-                        <Volume2 className={`w-5 h-5 md:w-6 md:h-6 ${settings.textToSpeech ? "text-white" : "text-blue-400"}`} />
+                        <Volume2 className={`w-5 h-5 md:w-6 md:h-6 ${settings.textToSpeech ? "text-white" : "text-blue-500"}`} />
                       </div>
                     </div>
                   </div>
@@ -166,14 +166,14 @@ export function AccessibilityMenu({ isOpen, onClose }: AccessibilityMenuProps) {
 
               <Button 
                 onClick={onClose}
-                className="w-full h-14 rounded-2xl bg-foreground text-background font-black text-xl transition-all active:scale-95"
+                className="w-full h-14 rounded-2xl bg-foreground text-background font-black text-xl transition-all active:scale-95 shadow-xl hover:opacity-90"
               >
                 إغلاق الإعدادات
               </Button>
 
               <div className="flex items-center gap-3 justify-center py-2 px-4 bg-blue-500/10 rounded-2xl border border-blue-500/20 mt-4">
-                <Activity className="w-4 h-4 text-blue-400 animate-pulse" />
-                <span className="text-[10px] text-blue-400 font-bold uppercase tracking-widest text-center">
+                <Activity className="w-4 h-4 text-blue-500 animate-pulse" />
+                <span className="text-[10px] text-blue-500 font-bold uppercase tracking-widest text-center">
                    النظام يعمل بشكل متزامن واحترافي
                 </span>
               </div>
@@ -193,13 +193,13 @@ function AccessibilityItem({ icon, title, description, checked, onChange }: {
   onChange: (v: boolean) => void;
 }) {
   return (
-    <div className="p-4 bg-muted/40 rounded-[1.5rem] border border-white/5 hover:border-white/10 transition-colors flex items-center justify-between gap-4 group">
+    <div className="p-4 bg-muted/40 rounded-[1.5rem] border border-border hover:border-primary/50 transition-colors flex items-center justify-between gap-4 group cursor-pointer" onClick={() => onChange(!checked)}>
       <div className="flex items-center gap-4 text-right">
-        <div className="w-10 h-10 rounded-xl bg-background flex items-center justify-center shrink-0 shadow-inner group-hover:scale-110 transition-transform">
+        <div className="w-10 h-10 rounded-xl bg-card border border-border flex items-center justify-center shrink-0 shadow-sm group-hover:scale-110 transition-transform">
           {icon}
         </div>
-        <div className="space-y-0.5">
-          <Label className="text-sm font-black text-foreground cursor-pointer block">{title}</Label>
+        <div className="space-y-0.5 pointer-events-none">
+          <Label className="text-sm font-black text-foreground block">{title}</Label>
           <p className="text-[10px] text-muted-foreground leading-tight">{description}</p>
         </div>
       </div>

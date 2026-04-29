@@ -88,20 +88,20 @@ export function TutorialModal({ isOpen, onClose }: TutorialModalProps) {
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
-            <div className="sticky top-0 z-10 bg-gradient-to-b from-[#1e293b] to-[#1e293b]/95 backdrop-blur-xl p-8 pb-6 rounded-t-[2.5rem] border-b border-white/5">
+            <div className="sticky top-0 z-10 bg-gradient-to-b from-card to-card/95 backdrop-blur-xl p-8 pb-6 rounded-t-[2.5rem] border-b border-border">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
                   <div className="p-3 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-2xl shadow-lg shadow-cyan-500/20">
                     <HelpCircle className="w-7 h-7 text-white" />
                   </div>
                   <div>
-                    <h2 className="text-2xl font-black text-white">كيف تلعب؟ 🎮</h2>
-                    <p className="text-slate-400 text-sm font-medium">دليل استخدام اللعبة التعليمية</p>
+                    <h2 className="text-2xl font-black text-foreground">كيف تلعب؟ 🎮</h2>
+                    <p className="text-muted-foreground text-sm font-medium">دليل استخدام اللعبة التعليمية</p>
                   </div>
                 </div>
                 <button
                   onClick={onClose}
-                  className="p-2 rounded-xl hover:bg-white/5 text-slate-400 hover:text-white transition-colors"
+                  className="p-2 rounded-xl hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
                 >
                   <X className="w-6 h-6" />
                 </button>
@@ -124,9 +124,9 @@ export function TutorialModal({ isOpen, onClose }: TutorialModalProps) {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1.5">
                       <span className={step.textColor}>{step.icon}</span>
-                      <h3 className="text-lg font-black text-white">{step.title}</h3>
+                      <h3 className="text-lg font-black text-foreground">{step.title}</h3>
                     </div>
-                    <p className="text-slate-400 font-medium text-sm leading-relaxed">{step.description}</p>
+                    <p className="text-muted-foreground font-medium text-sm leading-relaxed">{step.description}</p>
                   </div>
                 </motion.div>
               ))}
@@ -137,7 +137,7 @@ export function TutorialModal({ isOpen, onClose }: TutorialModalProps) {
                   <Sparkles className="w-5 h-5 text-cyan-400" />
                   <h3 className="text-lg font-black text-cyan-400">نصائح ذهبية 💡</h3>
                 </div>
-                <ul className="space-y-2 text-slate-300 text-sm font-medium">
+                <ul className="space-y-2 text-muted-foreground text-sm font-medium">
                   <li className="flex items-center gap-2">
                     <span className="text-cyan-500">•</span>
                     أجب بسرعة للحصول على مكافأة السرعة (+50 XP)

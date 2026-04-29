@@ -14,7 +14,12 @@ import {
 } from "@/lib/storage";
 import { Sparkles, Trophy, BookOpen, ShoppingBag, LayoutDashboard, ChevronRight } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { Leaderboard } from "@/components/Leaderboard";
+import dynamic from "next/dynamic";
+
+const Leaderboard = dynamic(() => import("@/components/Leaderboard").then(mod => mod.Leaderboard), {
+  ssr: false,
+  loading: () => <div className="h-96 w-full animate-pulse bg-card rounded-[2.5rem]" />
+});
 
 export default function LessonsPage() {
   const [completedLessons, setCompletedLessons] = useState<string[]>([]);
@@ -208,12 +213,12 @@ export default function LessonsPage() {
             </div>
             
             {/* Quick Tip Card */}
-            <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-[2.5rem] p-8 text-white shadow-xl relative overflow-hidden group text-right">
-               <div className="absolute top-0 left-0 p-4 opacity-20 group-hover:scale-110 transition-transform">
+            <div className="bg-card border-2 border-border rounded-[2.5rem] p-8 text-foreground shadow-xl relative overflow-hidden group text-right">
+               <div className="absolute top-0 left-0 p-4 opacity-10 text-yellow-500 group-hover:scale-110 transition-transform">
                   <Sparkles className="w-16 h-16" />
                </div>
                <h3 className="text-xl font-black mb-2 relative z-10">نصيحة للمحترفين!</h3>
-               <p className="text-white/80 font-medium text-sm relative z-10 leading-relaxed">
+               <p className="text-muted-foreground font-medium text-sm relative z-10 leading-relaxed">
                   حقق سلسلة 5 إجابات متتالية لمضاعفة نقاطك في الـ 3 أسئلة القادمة!
                </p>
             </div>

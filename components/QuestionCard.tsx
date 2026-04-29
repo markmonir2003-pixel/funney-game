@@ -35,8 +35,8 @@ export function QuestionCard({
   // Speak question on load
   useEffect(() => {
     if (settings.textToSpeech && !answered) {
-      const optionsText = question.options.map((opt, i) => `الخيار ${["الأول", "التاني", "التالت", "الرابع"][i]}: ${opt}`).join(", ");
-      const textToSpeak = `بص يا بطل، السؤال بيقول: ${question.questionText}, , وعندك الخيارات ديه: , ${optionsText}`;
+      const optionsText = question.options.map((opt, i) => `الخيار ${["الأول", "التاني", "التالت", "الرابع"][i]}: ${opt}`).join(" , ");
+      const textToSpeak = `${question.questionText} , , ${optionsText}`;
       speak(textToSpeak);
     }
   }, [question, settings.textToSpeech, speak, answered]);
@@ -45,9 +45,9 @@ export function QuestionCard({
   useEffect(() => {
     if (answered && settings.textToSpeech) {
       if (selectedAnswer === question.correctAnswer) {
-        speak(`عاش يا بطل! إجابة صح، وزودت نقطك وخبرتك!`);
+        speak(`الإجابة صح`);
       } else {
-        speak(`للأسف الإجابة مش صح، فكر تاني وجرب في السؤال الجاي.`);
+        speak(`الإجابة غلط`);
       }
     }
   }, [answered, selectedAnswer, question.correctAnswer, settings.textToSpeech, speak]);

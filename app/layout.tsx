@@ -8,8 +8,6 @@ export const metadata: Metadata = {
   description: "منصة تعليمية تفاعلية لتعليم الأطفال والشباب أساسيات البرمجة من خلال الألعاب والتحديات الممتعة.",
   keywords: ["تعليم البرمجة", "ألعاب تعليمية", "أكواد", "برمجة للأطفال", "تعلم البرمجة بالعربي"],
   authors: [{ name: "Play 2 Learn Team" }],
-  viewport: "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0",
-  themeColor: "#06b6d4",
   openGraph: {
     type: "website",
     locale: "ar_EG",

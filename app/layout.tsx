@@ -4,6 +4,7 @@ import { ClerkProvider } from '@clerk/nextjs'
 import './globals.css'
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://play2learn.com"),
   title: "Play 2 Learn | عالم البرمجة للأبطال",
   description: "منصة تعليمية تفاعلية لتعليم الأطفال والشباب أساسيات البرمجة من خلال الألعاب والتحديات الممتعة.",
   keywords: ["تعليم البرمجة", "ألعاب تعليمية", "أكواد", "برمجة للأطفال", "تعلم البرمجة بالعربي"],

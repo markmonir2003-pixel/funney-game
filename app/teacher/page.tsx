@@ -64,10 +64,7 @@ export default function TeacherPortal() {
     try {
       const { data, error } = await supabase
         .from('student_scores')
-        .select(`
-          *,
-          lessons (name)
-        `)
+        .select('*')
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -290,7 +287,7 @@ export default function TeacherPortal() {
                              globalScores.map((score, i) => (
                                  <tr key={i} className="border-b border-border/50 hover:bg-muted/30 transition-colors group">
                                    <td className="py-4 md:py-6 px-2 md:px-4 font-black text-foreground text-sm md:text-base">{score.student_name}</td>
-                                   <td className="py-4 md:py-6 px-2 md:px-4 text-muted-foreground font-bold text-xs md:text-sm">{score.lessons?.name || "درس محذوف"}</td>
+                                   <td className="py-4 md:py-6 px-2 md:px-4 text-muted-foreground font-bold text-xs md:text-sm">{score.lesson_name || "مهمة غير معروفة"}</td>
                                    <td className="py-4 md:py-6 px-2 md:px-4">
                                       <span className="bg-cyan-500/10 text-cyan-600 px-2 md:px-3 py-1 rounded-full font-black text-[10px] md:text-sm border border-cyan-500/20">
                                          {score.score}%

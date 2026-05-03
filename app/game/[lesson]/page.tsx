@@ -234,16 +234,15 @@ export default function GamePage() {
 
     // 4. Save to global scores table (Server Action) for teacher visibility
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-    if (uuidRegex.test(lessonParam)) {
-      saveScoreAction({
-        lesson_id: lessonParam,
-        student_id: user?.id,
-        student_name: user?.fullName || user?.username || "Guest Student",
-        score: score,
-        accuracy: accuracy,
-        xp_earned: state.xpEarned
-      }).catch(err => console.error("Error saving score:", err));
-    }
+    saveScoreAction({
+      lesson_id: uuidRegex.test(lessonParam) ? lessonParam : null,
+      lesson_name: lessonName,
+      student_id: user?.id,
+      student_name: user?.fullName || user?.username || "Guest Student",
+      score: score,
+      accuracy: accuracy,
+      xp_earned: state.xpEarned
+    }).catch(err => console.error("Error saving score:", err));
 
     setGameEnded(true);
   };

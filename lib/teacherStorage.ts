@@ -103,7 +103,19 @@ function getRandomFunnyColor(): string {
 
 export function encodeLesson(lesson: CustomLesson): string {
   try {
-    const json = JSON.stringify(lesson);
+    // Minify for URL: use single-letter keys and remove redundant fields (id, lessonName, color, etc.)
+    const minified = {
+      n: lesson.name,
+      d: lesson.description,
+      qs: lesson.questions.map(q => ({
+        t: q.questionText,
+        o: q.options,
+        c: q.correctAnswer,
+        dif: q.difficulty,
+        ex: q.explanation
+      }))
+    };
+    const json = JSON.stringify(minified);
     return LZString.compressToEncodedURIComponent(json);
   } catch (e) {
     console.error("Encoding failed", e);
@@ -115,7 +127,30 @@ export function decodeLesson(encoded: string): CustomLesson | null {
   try {
     const json = LZString.decompressFromEncodedURIComponent(encoded);
     if (!json) return null;
-    return JSON.parse(json);
+    
+    const data = JSON.parse(json);
+    
+    // Check if it's the new minified format or the old format
+    if (data.qs && Array.isArray(data.qs)) {
+      return {
+        id: "temp-" + Date.now(),
+        name: data.n || "مهمة مشاركة",
+        description: data.d || "",
+        color: "from-cyan-500 to-blue-500",
+        questions: data.qs.map((q: any, i: number) => ({
+          id: i.toString(),
+          lessonName: data.n || "",
+          questionText: q.t,
+          options: q.o,
+          correctAnswer: q.c,
+          difficulty: q.dif,
+          explanation: q.ex
+        })),
+        createdAt: new Date().toISOString()
+      };
+    }
+    
+    return data; // Fallback for old format
   } catch (e) {
     console.error("Decoding failed", e);
     return null;

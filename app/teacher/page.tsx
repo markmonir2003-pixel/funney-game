@@ -62,9 +62,9 @@ export default function TeacherPortal() {
     
     if (!result.success || !result.id) {
       const encoded = encodeLesson(lesson);
-      const url = `${window.location.origin}/game/${encodeURIComponent(lesson.name)}?q=${encoded}`;
+      const url = `${window.location.origin}/game/q?q=${encoded}`;
       navigator.clipboard.writeText(url);
-      toast.success("تم نسخ الرابط بنجاح! يمكنك مشاركته الآن.");
+      toast.success("تم نسخ الرابط المختصر بنجاح! يمكنك مشاركته الآن.");
       return;
     }
 

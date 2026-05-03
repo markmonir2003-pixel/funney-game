@@ -77,6 +77,9 @@ const cairo = Cairo({
   preload: true,
 })
 
+import { Providers } from '@/components/Providers'
+import { SyncWrapper } from '@/components/SyncWrapper'
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -86,7 +89,6 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="ar" dir="rtl" className={cairo.variable} suppressHydrationWarning>
         <head>
-          {/* Next.js 15 automatically handles preconnecting to Google Fonts if using next/font/google */}
           <link rel="preconnect" href="https://clerk.play2learn.com" />
           <link rel="preconnect" href="https://va.vercel-scripts.com" />
           <link rel="dns-prefetch" href="https://clerk.play2learn.com" />
@@ -95,25 +97,26 @@ export default function RootLayout({
           <link rel="dns-prefetch" href="https://img.clerk.com" />
           <link rel="manifest" href="/manifest.json" />
           <link rel="apple-touch-icon" href="/icon-192.png" />
-          {/* Preload critical font if it exists locally */}
-          {/* <link rel="preload" href="/fonts/LutfeyArabicDEMO.woff2" as="font" type="font/woff2" crossOrigin="anonymous" /> */}
         </head>
         <body className="font-arabic antialiased min-h-screen" suppressHydrationWarning>
-          <AccessibilityProvider>
-            <ThemeProvider
-              attribute="class"
-              defaultTheme="dark"
-              enableSystem
-              disableTransitionOnChange
-            >
-              <div className="fixed inset-0 bg-background pointer-events-none" />
-              <div className="relative z-0 pt-20">
-                <Header />
-                {children}
-              </div>
-            </ThemeProvider>
-          </AccessibilityProvider>
-          <Toaster position="top-center" richColors />
+          <Providers>
+            <AccessibilityProvider>
+              <ThemeProvider
+                attribute="class"
+                defaultTheme="dark"
+                enableSystem
+                disableTransitionOnChange
+              >
+                <div className="fixed inset-0 bg-background pointer-events-none" />
+                <div className="relative z-0 pt-20">
+                  <SyncWrapper />
+                  <Header />
+                  {children}
+                </div>
+                <Toaster position="top-center" expand={true} richColors />
+              </ThemeProvider>
+            </AccessibilityProvider>
+          </Providers>
           {process.env.NODE_ENV === 'production' && <Analytics />}
         </body>
       </html>

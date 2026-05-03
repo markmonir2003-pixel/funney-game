@@ -15,6 +15,8 @@ import {
 import { ArrowLeft, Plus, Trash2, CheckCircle2, AlertCircle, Save, Sparkles } from "lucide-react";
 import { AIGeneratorModal } from "@/components/AIGeneratorModal";
 import { toast } from "sonner";
+import { useVirtualizer } from "@tanstack/react-virtual";
+import { useRef } from "react";
 
 export default function QuestionEditor() {
   const params = useParams();
@@ -36,6 +38,15 @@ export default function QuestionEditor() {
   const [correctIdx, setCorrectIdx] = useState(0);
   const [difficulty, setDifficulty] = useState<"easy" | "medium" | "hard">("easy");
   const [explanation, setExplanation] = useState("");
+
+  const parentRef = useRef<HTMLDivElement>(null);
+
+  const virtualizer = useVirtualizer({
+    count: lesson?.questions.length || 0,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 220, // Estimated height of a question card
+    overscan: 5,
+  });
 
   useEffect(() => {
     if (!isMounted) return;
@@ -225,59 +236,83 @@ export default function QuestionEditor() {
           )}
         </AnimatePresence>
 
-        <div className="space-y-4">
-          {lesson.questions.length === 0 ? (
-            <div className="py-20 text-center bg-slate-800/20 border border-slate-800 rounded-2xl">
-              <AlertCircle className="w-10 h-10 text-slate-700 mx-auto mb-3" />
-              <p className="text-slate-500">لا توجد أسئلة بعد. اضغط على "إضافة سؤال" للبدء.</p>
-            </div>
-          ) : (
-            lesson.questions.map((q, idx) => (
-              <motion.div
-                key={q.id}
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                className="bg-slate-800/40 border border-slate-700/50 rounded-2xl md:rounded-3xl p-4 md:p-6 lg:p-8 relative group"
-              >
-                <div className="flex flex-col-reverse md:flex-row justify-between items-start gap-4">
-                  <div className="flex-1 w-full">
-                    <div className="flex items-center gap-2 mb-3">
-                      <span className="text-[10px] md:text-xs font-black text-purple-400 uppercase tracking-widest">سؤال {idx + 1}</span>
-                      <span className={`text-[8px] md:text-[10px] px-2 py-0.5 rounded-full font-black uppercase ${
-                        q.difficulty === 'easy' ? 'bg-green-500/10 text-green-400 border border-green-500/20' :
-                        q.difficulty === 'medium' ? 'bg-yellow-500/10 text-yellow-400 border border-yellow-500/20' :
-                        'bg-red-500/10 text-red-400 border border-red-500/20'
-                      }`}>
-                        {q.difficulty === 'easy' ? 'سهل' : q.difficulty === 'medium' ? 'متوسط' : 'صعب'}
-                      </span>
-                    </div>
-                    <p className="text-base md:text-lg text-white font-bold mb-6 leading-relaxed">{q.questionText}</p>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 md:gap-3">
-                      {q.options.map((opt, oIdx) => (
-                        <div 
-                          key={oIdx} 
-                          className={`text-xs md:text-sm py-2.5 md:py-3 px-3 md:px-4 rounded-xl flex items-center gap-3 transition-all ${
-                            q.correctAnswer === oIdx ? 'bg-green-500/10 text-green-300 border border-green-500/30' : 'bg-slate-900/50 text-slate-400 border border-slate-800'
-                          }`}
-                        >
-                          <div className={`w-1.5 h-1.5 md:w-2 md:h-2 rounded-full shrink-0 ${q.correctAnswer === oIdx ? 'bg-green-400 shadow-[0_0_8px_rgba(74,222,128,0.5)]' : 'bg-slate-700'}`} />
-                          <span className="font-medium truncate">{opt}</span>
+        <div 
+          ref={parentRef}
+          className="max-h-[70vh] overflow-auto scroll-smooth pr-2"
+        >
+          <div
+            style={{
+              height: `${virtualizer.getTotalSize()}px`,
+              width: '100%',
+              position: 'relative',
+            }}
+          >
+            {lesson.questions.length === 0 ? (
+              <div className="py-20 text-center bg-slate-800/20 border border-slate-800 rounded-2xl">
+                <AlertCircle className="w-10 h-10 text-slate-700 mx-auto mb-3" />
+                <p className="text-slate-500">لا توجد أسئلة بعد. اضغط على "إضافة سؤال" للبدء.</p>
+              </div>
+            ) : (
+              virtualizer.getVirtualItems().map((virtualItem) => {
+                const q = lesson.questions[virtualItem.index];
+                return (
+                  <motion.div
+                    key={virtualItem.key}
+                    style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      width: '100%',
+                      height: `${virtualItem.size}px`,
+                      transform: `translateY(${virtualItem.start}px)`,
+                    }}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    className="pb-4"
+                  >
+                    <div className="bg-slate-800/40 border border-slate-700/50 rounded-2xl md:rounded-3xl p-4 md:p-6 lg:p-8 relative group h-full">
+                      <div className="flex flex-col-reverse md:flex-row justify-between items-start gap-4 h-full">
+                        <div className="flex-1 w-full min-w-0 overflow-hidden">
+                          <div className="flex items-center gap-2 mb-2 md:mb-3">
+                            <span className="text-[10px] md:text-xs font-black text-purple-400 uppercase tracking-widest">سؤال {virtualItem.index + 1}</span>
+                            <span className={`text-[8px] md:text-[10px] px-2 py-0.5 rounded-full font-black uppercase ${
+                              q.difficulty === 'easy' ? 'bg-green-500/10 text-green-400 border border-green-500/20' :
+                              q.difficulty === 'medium' ? 'bg-yellow-500/10 text-yellow-400 border border-yellow-500/20' :
+                              'bg-red-500/10 text-red-400 border border-red-500/20'
+                            }`}>
+                              {q.difficulty === 'easy' ? 'سهل' : q.difficulty === 'medium' ? 'متوسط' : 'صعب'}
+                            </span>
+                          </div>
+                          <p className="text-base md:text-lg text-white font-bold mb-3 md:mb-6 leading-relaxed truncate">{q.questionText}</p>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 md:gap-3">
+                            {q.options.map((opt, oIdx) => (
+                              <div 
+                                key={oIdx} 
+                                className={`text-[10px] md:text-xs py-1.5 px-3 md:px-4 rounded-xl flex items-center gap-2 md:gap-3 transition-all ${
+                                  q.correctAnswer === oIdx ? 'bg-green-500/10 text-green-300 border border-green-500/30' : 'bg-slate-900/50 text-slate-400 border border-slate-800'
+                                }`}
+                              >
+                                <div className={`w-1 h-1 md:w-1.5 md:h-1.5 rounded-full shrink-0 ${q.correctAnswer === oIdx ? 'bg-green-400 shadow-[0_0_8px_rgba(74,222,128,0.5)]' : 'bg-slate-700'}`} />
+                                <span className="font-medium truncate">{opt}</span>
+                              </div>
+                            ))}
+                          </div>
                         </div>
-                      ))}
+                        <div className="w-full md:w-auto flex justify-end">
+                          <button
+                            onClick={() => handleDeleteQuestion(q.id)}
+                            className="p-2 md:p-3 text-slate-500 hover:text-red-400 hover:bg-red-400/10 rounded-xl transition-all"
+                          >
+                            <Trash2 className="w-5 h-5" />
+                          </button>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                  <div className="w-full md:w-auto flex justify-end">
-                    <button
-                      onClick={() => handleDeleteQuestion(q.id)}
-                      className="p-2 md:p-3 text-slate-500 hover:text-red-400 hover:bg-red-400/10 rounded-xl transition-all"
-                    >
-                      <Trash2 className="w-5 h-5" />
-                    </button>
-                  </div>
-                </div>
-              </motion.div>
-            ))
-          )}
+                  </motion.div>
+                );
+              })
+            )}
+          </div>
         </div>
 
         <AIGeneratorModal 

@@ -98,20 +98,20 @@ export default function TeacherPortal() {
   };
 
   const copyLink = async (lesson: CustomLesson) => {
-    toast.info("Preparing cloud link...");
+    toast.info("جاري تجهيز الرابط...", { duration: 1000 });
     const result = await saveLessonAction(lesson, userId || undefined);
     
     if (!result.success || !result.id) {
-      toast.error("Failed to generate cloud link. Falling back to local link.");
       const encoded = encodeLesson(lesson);
       const url = `${window.location.origin}/game/${encodeURIComponent(lesson.name)}?q=${encoded}`;
       navigator.clipboard.writeText(url);
+      toast.success("تم نسخ الرابط بنجاح! يمكنك مشاركته الآن.");
       return;
     }
 
     const url = `${window.location.origin}/game/${result.id}`;
     navigator.clipboard.writeText(url);
-    toast.success("Short cloud link copied to clipboard!");
+    toast.success("تم نسخ الرابط السحابي القصير بنجاح!");
   };
 
   if (!isMounted) return null;

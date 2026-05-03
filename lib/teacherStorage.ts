@@ -1,5 +1,6 @@
 // Storage utility for managing teacher-created lessons and questions
 import { supabase } from "./supabase";
+import LZString from "lz-string";
 
 export interface CustomQuestion {
   id: string;
@@ -103,9 +104,7 @@ function getRandomFunnyColor(): string {
 export function encodeLesson(lesson: CustomLesson): string {
   try {
     const json = JSON.stringify(lesson);
-    // Use encodeURIComponent to handle non-ASCII characters (like Arabic)
-    // then btoa to make it a safe base64 string
-    return btoa(encodeURIComponent(json));
+    return LZString.compressToEncodedURIComponent(json);
   } catch (e) {
     console.error("Encoding failed", e);
     return "";
@@ -114,8 +113,8 @@ export function encodeLesson(lesson: CustomLesson): string {
 
 export function decodeLesson(encoded: string): CustomLesson | null {
   try {
-    // atob decodes base64, then decodeURIComponent restores non-ASCII characters
-    const json = decodeURIComponent(atob(encoded));
+    const json = LZString.decompressFromEncodedURIComponent(encoded);
+    if (!json) return null;
     return JSON.parse(json);
   } catch (e) {
     console.error("Decoding failed", e);

@@ -1,10 +1,10 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, XCircle, ChevronRight, Zap, Target, Brain, Volume2, Eye, Activity } from "lucide-react";
+import { CheckCircle2, XCircle, ChevronRight, Zap, Target, Brain, Activity } from "lucide-react";
 import { useAccessibility } from "@/hooks/useAccessibility";
-import { useEffect } from "react";
+import { useEffect, memo, useState } from "react";
 
 interface Question {
   id: number | string;
@@ -21,36 +21,144 @@ interface QuestionCardProps {
   answered: boolean;
   onSelectAnswer: (index: number) => void;
   onNext: () => void;
+  /** Seconds still on the clock when the answer is submitted (optional) */
+  timeRemaining?: number;
+  /** The total time limit for the question (optional) */
+  timeLimit?: number;
 }
 
-export function QuestionCard({
+// ─── Option button — memoised so it only re-renders when its own state changes ──
+interface OptionProps {
+  option: string;
+  index: number;
+  answered: boolean;
+  isSelected: boolean;
+  isCorrect: boolean;
+  highContrast: boolean;
+  visualCues: boolean;
+  optionSizeClass: string;
+  onSelect: (index: number) => void;
+}
+
+const AnswerOption = memo(function AnswerOption({
+  option,
+  index,
+  answered,
+  isSelected,
+  isCorrect,
+  highContrast,
+  visualCues,
+  optionSizeClass,
+  onSelect,
+}: OptionProps) {
+  const showCorrect = answered && isCorrect;
+  const showIncorrect = answered && isSelected && !isCorrect;
+
+  let cardClasses = "relative w-full h-auto p-4 md:p-6 rounded-xl md:rounded-2xl border-2 text-left transition-all duration-300 ";
+
+  if (!answered) {
+    cardClasses += "bg-muted/50 border-border hover:border-primary/50 hover:bg-primary/5 hover:translate-y-[-2px]";
+  } else {
+    if (isCorrect) {
+      cardClasses += "bg-green-500/10 border-green-500 text-foreground shadow-[0_0_20px_rgba(34,197,94,0.1)]";
+    } else if (isSelected) {
+      cardClasses += "bg-red-500/10 border-red-500 text-foreground";
+    } else {
+      cardClasses += "bg-muted/30 border-border/50 text-muted-foreground opacity-50";
+    }
+  }
+
+  return (
+    <button
+      onClick={() => !answered && onSelect(index)}
+      disabled={answered}
+      className={cardClasses}
+    >
+      <div className="flex items-center gap-3 md:gap-4">
+        <div className={`w-8 h-8 md:w-10 md:h-10 rounded-lg md:rounded-xl flex items-center justify-center font-black text-base md:text-lg shrink-0 ${
+          !answered ? (highContrast ? "bg-white text-black" : "bg-muted border border-border text-muted-foreground") :
+          isCorrect ? "bg-green-500 text-white" :
+          isSelected ? "bg-red-500 text-white" : "bg-muted text-muted-foreground"
+        }`}>
+          {["أ", "ب", "ج", "د"][index]}
+        </div>
+        <span className={`flex-1 font-bold ${optionSizeClass}`}>{option}</span>
+        {visualCues && isCorrect && answered && (
+          <div className="flex items-center gap-1 bg-green-500/20 px-2 py-1 rounded-full mr-2">
+            <Activity className="w-3 h-3 text-green-500 animate-pulse" />
+            <span className="text-[8px] font-black text-green-500 uppercase">صوت نجاح</span>
+          </div>
+        )}
+        {visualCues && showIncorrect && (
+          <div className="flex items-center gap-1 bg-red-500/20 px-2 py-1 rounded-full mr-2">
+            <Activity className="w-3 h-3 text-red-500 animate-bounce" />
+            <span className="text-[8px] font-black text-red-500 uppercase">صوت خطأ</span>
+          </div>
+        )}
+        {showCorrect && <CheckCircle2 className="w-5 h-5 md:w-6 md:h-6 text-green-500" />}
+        {showIncorrect && <XCircle className="w-5 h-5 md:w-6 md:h-6 text-red-500" />}
+      </div>
+    </button>
+  );
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+
+function getDifficultyStyles(difficulty: string) {
+  switch (difficulty) {
+    case "easy":
+      return { color: "text-green-400", bg: "bg-green-500/10", border: "border-green-500/30", icon: <Zap className="w-4 h-4" />, label: "سهل" };
+    case "medium":
+      return { color: "text-yellow-400", bg: "bg-yellow-500/10", border: "border-yellow-500/30", icon: <Target className="w-4 h-4" />, label: "متوسط" };
+    case "hard":
+      return { color: "text-red-400", bg: "bg-red-500/10", border: "border-red-500/30", icon: <Brain className="w-4 h-4" />, label: "صعب" };
+    default:
+      return { color: "text-slate-400", bg: "bg-slate-500/10", border: "border-slate-500/30", icon: <Zap className="w-4 h-4" />, label: "غير معروف" };
+  }
+}
+
+export const QuestionCard = memo(function QuestionCard({
   question,
   selectedAnswer,
   answered,
   onSelectAnswer,
   onNext,
+  timeRemaining = 0,
+  timeLimit = 30,
 }: QuestionCardProps) {
   const { settings, speak } = useAccessibility();
 
-  // Speak question on load
+  // ── Speed-burst state — show motivational overlay on fast correct answer ──
+  const [showSpeedBurst, setShowSpeedBurst] = useState(false);
+
+  useEffect(() => {
+    // Only trigger if answered correctly within the first 3 seconds
+    if (answered && selectedAnswer === question.correctAnswer && timeRemaining >= (timeLimit - 3)) {
+      setShowSpeedBurst(true);
+      const t = setTimeout(() => setShowSpeedBurst(false), 1800);
+      return () => clearTimeout(t);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [answered]);
+
+  // Speak question on load — only fires when question identity changes
   useEffect(() => {
     if (settings.textToSpeech && !answered) {
-      const optionsText = question.options.map((opt, i) => `الخيار ${["الأول", "التاني", "التالت", "الرابع"][i]}: ${opt}`).join(" , ");
-      const textToSpeak = `${question.questionText} , , ${optionsText}`;
-      speak(textToSpeak);
+      const optionsText = question.options
+        .map((opt, i) => `الخيار ${["الأول", "التاني", "التالت", "الرابع"][i]}: ${opt}`)
+        .join(" , ");
+      speak(`${question.questionText} , , ${optionsText}`);
     }
-  }, [question, settings.textToSpeech, speak, answered]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [question.id, settings.textToSpeech]);
 
-  // Speak feedback on answer
+  // Speak feedback immediately after answering
   useEffect(() => {
     if (answered && settings.textToSpeech) {
-      if (selectedAnswer === question.correctAnswer) {
-        speak(`الإجابة صح`);
-      } else {
-        speak(`الإجابة غلط`);
-      }
+      speak(selectedAnswer === question.correctAnswer ? "الإجابة صح" : "الإجابة غلط");
     }
-  }, [answered, selectedAnswer, question.correctAnswer, settings.textToSpeech, speak]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [answered]);
 
   const getFontSizeClass = () => {
     switch (settings.fontSize) {
@@ -67,20 +175,9 @@ export function QuestionCard({
       default: return "text-base md:text-lg";
     }
   };
-  const getDifficultyStyles = (difficulty: string) => {
-    switch (difficulty) {
-      case "easy":
-        return { color: "text-green-400", bg: "bg-green-500/10", border: "border-green-500/30", icon: <Zap className="w-4 h-4" />, label: "سهل" };
-      case "medium":
-        return { color: "text-yellow-400", bg: "bg-yellow-500/10", border: "border-yellow-500/30", icon: <Target className="w-4 h-4" />, label: "متوسط" };
-      case "hard":
-        return { color: "text-red-400", bg: "bg-red-500/10", border: "border-red-500/30", icon: <Brain className="w-4 h-4" />, label: "صعب" };
-      default:
-        return { color: "text-slate-400", bg: "bg-slate-500/10", border: "border-slate-500/30", icon: <Zap className="w-4 h-4" />, label: "غير معروف" };
-    }
-  };
 
   const diff = getDifficultyStyles(question.difficulty);
+  const optionSizeClass = getOptionSizeClass();
 
   return (
     <motion.div
@@ -89,7 +186,88 @@ export function QuestionCard({
       animate={{ opacity: 1, scale: 1 }}
       key={question.id}
     >
-      <div className={`relative bg-card backdrop-blur-2xl border ${settings.highContrast ? 'border-foreground border-4 bg-black' : 'border-border'} rounded-[2rem] md:rounded-[2.5rem] p-5 md:p-8 shadow-2xl overflow-hidden`}>
+      {/* ── Speed-burst overlay ── */}
+      <AnimatePresence>
+        {showSpeedBurst && (
+          <motion.div
+            className="fixed inset-0 z-[200] pointer-events-none flex items-center justify-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0, transition: { duration: 0.4 } }}
+          >
+            {/* Radial glow */}
+            <motion.div
+              className="absolute inset-0 bg-yellow-400/10"
+              initial={{ scale: 0.5, opacity: 0 }}
+              animate={{ scale: 1.5, opacity: [0, 0.4, 0] }}
+              transition={{ duration: 0.7, ease: "easeOut" }}
+            />
+
+            {/* Main badge */}
+            <motion.div
+              className="flex flex-col items-center gap-3"
+              initial={{ scale: 0.2, y: 60, opacity: 0 }}
+              animate={{ scale: 1, y: 0, opacity: 1 }}
+              exit={{ scale: 0.8, y: -40, opacity: 0 }}
+              transition={{ type: "spring", damping: 12, stiffness: 200 }}
+            >
+              {/* Emoji burst */}
+              <motion.div
+                className="text-[5rem] md:text-[7rem] leading-none drop-shadow-2xl"
+                animate={{
+                  rotate: [0, -12, 12, -8, 8, 0],
+                  scale: [1, 1.15, 1.05, 1.1, 1],
+                }}
+                transition={{ duration: 0.7, ease: "easeInOut" }}
+              >
+                ⚡
+              </motion.div>
+
+              {/* Label */}
+              <motion.div
+                className="px-6 py-2.5 rounded-2xl bg-yellow-400 text-slate-900 font-black text-xl md:text-2xl tracking-tight shadow-2xl shadow-yellow-400/40 flex items-center gap-2"
+                initial={{ scaleX: 0 }}
+                animate={{ scaleX: 1 }}
+                transition={{ delay: 0.15, type: "spring", damping: 14, stiffness: 280 }}
+              >
+                ⚡ صاروخ طيارة!
+              </motion.div>
+
+              {/* XP badge */}
+              <motion.div
+                className="text-yellow-300 font-black text-base md:text-lg tracking-widest"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+              >
+                + 50 XP مكافأة السرعة
+              </motion.div>
+
+              {/* Confetti particles */}
+              {["🌟", "✨", "💥", "🎉", "💥", "✨"].map((p, i) => (
+                <motion.span
+                  key={i}
+                  className="absolute text-2xl pointer-events-none select-none"
+                  initial={{
+                    x: 0, y: 0, opacity: 1, scale: 0.5,
+                  }}
+                  animate={{
+                    x: (i % 2 === 0 ? 1 : -1) * (80 + i * 30),
+                    y: -(60 + i * 25),
+                    opacity: 0,
+                    scale: 1.4,
+                    rotate: (i % 2 === 0 ? 1 : -1) * 180,
+                  }}
+                  transition={{ duration: 0.9, delay: i * 0.07, ease: "easeOut" }}
+                >
+                  {p}
+                </motion.span>
+              ))}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      <div className={`relative bg-card backdrop-blur-2xl border ${settings.highContrast ? "border-foreground border-4 bg-black" : "border-border"} rounded-[2rem] md:rounded-[2.5rem] p-5 md:p-8 shadow-2xl overflow-hidden`}>
         {/* Subtle decorative glow */}
         <div className={`absolute top-0 right-0 w-64 h-64 ${diff.bg} blur-[100px] pointer-events-none opacity-20`} />
 
@@ -101,8 +279,8 @@ export function QuestionCard({
               {diff.label}
             </div>
             {answered && (
-              <div className={`font-black uppercase tracking-tighter text-[10px] md:text-sm ${selectedAnswer === question.correctAnswer ? 'text-green-500' : 'text-red-500'}`}>
-                {selectedAnswer === question.correctAnswer ? 'عمل رائع! +خبرة' : 'محاولة جيدة!'}
+              <div className={`font-black uppercase tracking-tighter text-[10px] md:text-sm ${selectedAnswer === question.correctAnswer ? "text-green-500" : "text-red-500"}`}>
+                {selectedAnswer === question.correctAnswer ? "عمل رائع! +خبرة" : "محاولة جيدة!"}
               </div>
             )}
           </div>
@@ -112,70 +290,22 @@ export function QuestionCard({
             {question.questionText}
           </h2>
 
-          {/* Answer options */}
+          {/* Answer options — each memoised individually */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 mb-6 md:mb-10">
-            {question.options.map((option, index) => {
-              const isSelected = selectedAnswer === index;
-              const isCorrect = index === question.correctAnswer;
-              const showCorrect = answered && isCorrect;
-              const showIncorrect = answered && isSelected && !isCorrect;
-
-              let cardClasses = "relative w-full h-auto p-4 md:p-6 rounded-xl md:rounded-2xl border-2 text-left transition-all duration-300 ";
-              
-              if (!answered) {
-                cardClasses += "bg-muted/50 border-border hover:border-primary/50 hover:bg-primary/5 hover:translate-y-[-2px]";
-              } else {
-                if (isCorrect) {
-                  cardClasses += "bg-green-500/10 border-green-500 text-foreground shadow-[0_0_20px_rgba(34,197,94,0.1)]";
-                } else if (isSelected) {
-                  cardClasses += "bg-red-500/10 border-red-500 text-foreground";
-                } else {
-                  cardClasses += "bg-muted/30 border-border/50 text-muted-foreground opacity-50";
-                }
-              }
-
-              return (
-                <motion.button
-                  key={index}
-                  onClick={() => !answered && onSelectAnswer(index)}
-                  disabled={answered}
-                  className={cardClasses}
-                >
-                  <div className="flex items-center gap-3 md:gap-4">
-                    <div className={`w-8 h-8 md:w-10 md:h-10 rounded-lg md:rounded-xl flex items-center justify-center font-black text-base md:text-lg shrink-0 ${
-                      !answered ? (settings.highContrast ? 'bg-white text-black' : 'bg-muted border border-border text-muted-foreground') :
-                      isCorrect ? 'bg-green-500 text-white' :
-                      isSelected ? 'bg-red-500 text-white' : 'bg-muted text-muted-foreground'
-                    }`}>
-                      {["أ", "ب", "ج", "د"][index]}
-                    </div>
-                    <span className={`flex-1 font-bold ${getOptionSizeClass()}`}>{option}</span>
-                    {settings.visualCues && isCorrect && answered && (
-                      <motion.div 
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        className="flex items-center gap-1 bg-green-500/20 px-2 py-1 rounded-full mr-2"
-                      >
-                        <Activity className="w-3 h-3 text-green-500 animate-pulse" />
-                        <span className="text-[8px] font-black text-green-500 uppercase">صوت نجاح</span>
-                      </motion.div>
-                    )}
-                    {settings.visualCues && showIncorrect && (
-                      <motion.div 
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        className="flex items-center gap-1 bg-red-500/20 px-2 py-1 rounded-full mr-2"
-                      >
-                        <Activity className="w-3 h-3 text-red-500 animate-bounce" />
-                        <span className="text-[8px] font-black text-red-500 uppercase">صوت خطأ</span>
-                      </motion.div>
-                    )}
-                    {showCorrect && <CheckCircle2 className="w-5 h-5 md:w-6 md:h-6 text-green-500" />}
-                    {showIncorrect && <XCircle className="w-5 h-5 md:w-6 md:h-6 text-red-500" />}
-                  </div>
-                </motion.button>
-              );
-            })}
+            {question.options.map((option, index) => (
+              <AnswerOption
+                key={index}
+                option={option}
+                index={index}
+                answered={answered}
+                isSelected={selectedAnswer === index}
+                isCorrect={index === question.correctAnswer}
+                highContrast={settings.highContrast}
+                visualCues={settings.visualCues}
+                optionSizeClass={optionSizeClass}
+                onSelect={onSelectAnswer}
+              />
+            ))}
           </div>
 
           {/* Explanation and Next button */}
@@ -207,4 +337,4 @@ export function QuestionCard({
       </div>
     </motion.div>
   );
-}
+});

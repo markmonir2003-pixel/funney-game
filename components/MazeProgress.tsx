@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { Flag, Skull, Zap, Smile, Rocket, Cloud } from "lucide-react";
-import { memo } from "react";
+import { memo, useMemo, useEffect, useState } from "react";
 import { SKINS } from "@/lib/gameLogic";
 
 interface MazeProgressProps {
@@ -30,15 +30,34 @@ export const MazeProgress = memo(function MazeProgress({
  }: MazeProgressProps) {
    const isDanger = incorrectCount > totalSteps / 3;
    const progress = isFinished && didWin ? 100 : (score / totalSteps) * 100;
-   
-   // Villain only moves when student makes a mistake. 
-   // Reaches end if student makes 75% mistakes (less punishing)
    const villainProgress = isFinished && !didWin ? 100 : (incorrectCount / (totalSteps * 0.75)) * 100;
+
+   // Stable mobile flag — read once from a resize observer, not on every render
+   const [isMobile, setIsMobile] = useState(false);
+   useEffect(() => {
+     const mq = window.matchMedia("(max-width: 767px)");
+     setIsMobile(mq.matches);
+     const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+     mq.addEventListener("change", handler);
+     return () => mq.removeEventListener("change", handler);
+   }, []);
+
+   // Pre-compute animation positions so framer-motion doesn't recompute them
+   const offset = isMobile ? "1.75rem" : "2.5rem";
+   const charWidth = isMobile ? "6rem" : "9rem";
+
+   const heroRight = useMemo(
+     () => `calc(${offset} + ${Math.min(100, progress) * 0.01} * (100% - ${charWidth}))`,
+     [offset, charWidth, progress]
+   );
+   const villainRight = useMemo(
+     () => `calc(${offset} + ${Math.min(100, villainProgress) * 0.01} * (100% - ${charWidth}))`,
+     [offset, charWidth, villainProgress]
+   );
  
    const getSkinIcon = () => {
      if (status === "happy") return "🤩";
      if (status === "sad") return "😢";
-     
      return SKINS.find(s => s.id === selectedSkin)?.emoji || "😊";
    };
 
@@ -97,7 +116,7 @@ export const MazeProgress = memo(function MazeProgress({
         {/* Chasing Monster (Cartoon Style) */}
         <motion.div
           className="absolute z-20 mb-14 md:mb-20"
-          animate={{ right: `calc(${typeof window !== 'undefined' && window.innerWidth < 768 ? '1.75rem' : '2.5rem'} + ${Math.min(100, villainProgress) * 0.01} * (100% - ${typeof window !== 'undefined' && window.innerWidth < 768 ? '6rem' : '9rem'}))` }}
+          animate={{ right: villainRight }}
           transition={{ type: "spring", damping: 15, stiffness: 100 }}
         >
           <motion.div 
@@ -119,7 +138,7 @@ export const MazeProgress = memo(function MazeProgress({
         <motion.div
           className="absolute z-30 mb-14 md:mb-20"
           animate={{ 
-            right: `calc(${typeof window !== 'undefined' && window.innerWidth < 768 ? '1.75rem' : '2.5rem'} + ${Math.min(100, progress) * 0.01} * (100% - ${typeof window !== 'undefined' && window.innerWidth < 768 ? '6rem' : '9rem'}))`,
+            right: heroRight,
             y: status === "happy" ? -20 : 0
           }}
           transition={{ type: "spring", damping: 12, stiffness: 90 }}

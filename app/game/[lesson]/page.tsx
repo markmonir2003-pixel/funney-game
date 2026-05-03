@@ -65,7 +65,7 @@ export default function GamePage() {
     decrementTime,
     isGameOver,
     currentQuestion,
-    state,
+    state,                    
     setTimeRemaining,
   } = gameState;
 
@@ -429,6 +429,8 @@ export default function GamePage() {
             answered={state.answered}
             onSelectAnswer={handleSelectAnswer}
             onNext={handleNextQuestion}
+            timeRemaining={state.timeRemaining}
+            timeLimit={timeLimit}
           />
         )}
       </div>

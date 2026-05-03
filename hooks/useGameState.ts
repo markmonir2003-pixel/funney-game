@@ -23,7 +23,7 @@ export interface GameState {
   questions: Question[];
 }
 
-export function useGameState(questions: Question[]) {
+export function useGameState(questions: Question[], timeLimit: number = 30) {
   const [state, setState] = useState<GameState>({
     currentQuestionIndex: 0,
     score: 0,
@@ -31,7 +31,7 @@ export function useGameState(questions: Question[]) {
     comboStreak: 0,
     selectedAnswer: null,
     answered: false,
-    timeRemaining: 30,
+    timeRemaining: timeLimit,
     questions,
   });
 
@@ -39,6 +39,21 @@ export function useGameState(questions: Question[]) {
   useEffect(() => {
     setState(prev => ({ ...prev, questions }));
   }, [questions]);
+
+  // Adjust time if timeLimit changes (e.g. user toggles read questions)
+  useEffect(() => {
+    setState(prev => {
+      if (prev.answered) return prev;
+      
+      let newTime = prev.timeRemaining;
+      if (timeLimit === 60 && prev.timeRemaining <= 30) {
+        newTime += 30;
+      } else if (timeLimit === 30 && prev.timeRemaining > 30) {
+        newTime -= 30;
+      }
+      return { ...prev, timeRemaining: newTime };
+    });
+  }, [timeLimit]);
 
   const isGameOver = questions.length > 0 && state.currentQuestionIndex >= questions.length;
   const currentQuestion = state.questions[state.currentQuestionIndex];
@@ -62,10 +77,10 @@ export function useGameState(questions: Question[]) {
         comboStreak: isCorrect ? prev.comboStreak + 1 : 0,
         selectedAnswer: null,
         answered: false,
-        timeRemaining: 30,
+        timeRemaining: timeLimit,
       };
     });
-  }, []);
+  }, [timeLimit]);
 
   const resetGame = useCallback(() => {
     setState({
@@ -75,10 +90,10 @@ export function useGameState(questions: Question[]) {
       comboStreak: 0,
       selectedAnswer: null,
       answered: false,
-      timeRemaining: 30,
+      timeRemaining: timeLimit,
       questions,
     });
-  }, [questions]);
+  }, [questions, timeLimit]);
 
   const decrementTime = useCallback(() => {
     setState((prev) => ({

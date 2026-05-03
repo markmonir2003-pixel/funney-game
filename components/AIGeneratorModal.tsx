@@ -37,9 +37,10 @@ export function AIGeneratorModal({ isOpen, onClose, onQuestionsGenerated }: AIGe
       } else {
         toast.error(result.error || "فشل توليد الأسئلة");
       }
-    } catch (e) {
-      toast.error("حدث خطأ غير متوقع");
+    } catch (e: any) {
+      toast.error(e.message || "حدث خطأ غير متوقع");
     } finally {
+
       setIsGenerating(false);
     }
   };
@@ -143,7 +144,7 @@ export function AIGeneratorModal({ isOpen, onClose, onQuestionsGenerated }: AIGe
               
               <div className="flex items-center gap-2 justify-center text-[10px] text-muted-foreground font-medium uppercase tracking-tighter">
                 <CheckCircle2 className="w-3 h-3 text-emerald-500" />
-                <span>مدعوم بتقنية Google Gemini 1.5 Flash</span>
+                <span>مدعوم بتقنية Groq & Llama 3.3 (فائق السرعة)</span>
               </div>
             </div>
           </motion.div>

@@ -113,20 +113,9 @@ export function AccessibilityProvider({ children }: { children: React.ReactNode 
     // Split text into Arabic and English segments based on English letters
     const chunks = text.split(/([a-zA-Z][a-zA-Z0-9_.,()[\]{}<>=:;'"\s]*[a-zA-Z0-9_)]|[a-zA-Z])/g).filter(Boolean);
 
-    let currentChunkIndex = 0;
-
-    const playNextChunk = () => {
-      // Abort if a new speak() was called
-      if (currentSpeechId.current !== mySpeechId) return;
-
-      if (currentChunkIndex >= chunks.length) return;
-
-      let chunk = chunks[currentChunkIndex];
-      currentChunkIndex++;
-
+    chunks.forEach(chunk => {
       let cleanChunk = chunk.trim();
       if (!cleanChunk || cleanChunk === "," || cleanChunk === "،") {
-        playNextChunk();
         return;
       }
 
@@ -150,7 +139,7 @@ export function AccessibilityProvider({ children }: { children: React.ReactNode 
         } else {
           utterance.lang = "en-US";
         }
-        utterance.rate = 1.15; // Faster English reading
+        utterance.rate = 1.15; // Normal English reading
         utterance.pitch = 1.0;
       } else {
         if (arabicVoice) {
@@ -164,23 +153,8 @@ export function AccessibilityProvider({ children }: { children: React.ReactNode 
       }
       
       utterance.volume = 1.0;
-      
-      utterance.onend = () => {
-        if (currentSpeechId.current === mySpeechId) {
-          playNextChunk();
-        }
-      };
-      utterance.onerror = (e) => {
-        if (currentSpeechId.current === mySpeechId) {
-          playNextChunk();
-        }
-      };
-
       window.speechSynthesis.speak(utterance);
-    };
-
-    // Start playing the first chunk
-    playNextChunk();
+    });
   }, [settings.textToSpeech]);
 
   return (

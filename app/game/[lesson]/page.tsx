@@ -56,7 +56,8 @@ export default function GamePage() {
   const [selectedSkin, setSelectedSkin] = useState("default");
   const [powerups, setPowerups] = useState({ freeze: 0, shield: 0, skip: 0 });
 
-  const gameState = useGameState(questions);
+  const timeLimit = settings.textToSpeech ? 60 : 30;
+  const gameState = useGameState(questions, timeLimit);
   const {
     selectAnswer,
     nextQuestion,

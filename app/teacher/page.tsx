@@ -57,20 +57,38 @@ export default function TeacherPortal() {
   };
 
   const copyLink = async (lesson: CustomLesson) => {
-    toast.info("جاري تجهيز الرابط...", { duration: 1000 });
+    toast.info("جاري تجهيز الرابط المختصر...", { duration: 1500 });
+    
+    // 1. Try Cloud Short Link (Professional Method)
     const result = await saveLessonAction(lesson, userId || undefined);
     
-    if (!result.success || !result.id) {
-      const encoded = encodeLesson(lesson);
-      const url = `${window.location.origin}/game/q?q=${encoded}`;
+    if (result.success && result.id) {
+      const url = `${window.location.origin}/game/${result.id}`;
       navigator.clipboard.writeText(url);
-      toast.success("تم نسخ الرابط المختصر بنجاح! يمكنك مشاركته الآن.");
+      toast.success("تم نسخ الرابط السحابي القصير! 🚀");
       return;
     }
 
-    const url = `${window.location.origin}/game/${result.id}`;
-    navigator.clipboard.writeText(url);
-    toast.success("تم نسخ الرابط السحابي القصير بنجاح!");
+    // 2. Fallback: Portable Link (Encoded)
+    const encoded = encodeLesson(lesson);
+    const portableUrl = `${window.location.origin}/game/q?q=${encoded}`;
+
+    try {
+      // Try to shorten the portable link using a public API (TinyURL)
+      const response = await fetch(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(portableUrl)}`);
+      if (response.ok) {
+        const shortUrl = await response.text();
+        navigator.clipboard.writeText(shortUrl);
+        toast.success("تم نسخ رابط خارجي مختصر! ✨");
+        return;
+      }
+    } catch (e) {
+      console.warn("External shortener failed, using raw encoded link");
+    }
+
+    // 3. Final Fallback: Raw Encoded Link (Already minified)
+    navigator.clipboard.writeText(portableUrl);
+    toast.success("تم نسخ الرابط المشفر (أطول قليلاً لكنه يعمل بدون إنترنت)");
   };
 
   if (!isMounted) return null;

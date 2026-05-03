@@ -86,16 +86,17 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="ar" dir="rtl" className={cairo.variable} suppressHydrationWarning>
         <head>
-          {/* DNS prefetch + preconnect for every external origin we call */}
-          <link rel="preconnect" href="https://fonts.googleapis.com" />
-          <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+          {/* Next.js 15 automatically handles preconnecting to Google Fonts if using next/font/google */}
           <link rel="preconnect" href="https://clerk.play2learn.com" />
-          <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+          <link rel="preconnect" href="https://va.vercel-scripts.com" />
           <link rel="dns-prefetch" href="https://clerk.play2learn.com" />
           <link rel="dns-prefetch" href="https://va.vercel-scripts.com" />
           <link rel="dns-prefetch" href="https://supabase.co" />
+          <link rel="dns-prefetch" href="https://img.clerk.com" />
           <link rel="manifest" href="/manifest.json" />
           <link rel="apple-touch-icon" href="/icon-192.png" />
+          {/* Preload critical font if it exists locally */}
+          {/* <link rel="preload" href="/fonts/LutfeyArabicDEMO.woff2" as="font" type="font/woff2" crossOrigin="anonymous" /> */}
         </head>
         <body className="font-arabic antialiased min-h-screen" suppressHydrationWarning>
           <AccessibilityProvider>

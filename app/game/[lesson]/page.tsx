@@ -5,9 +5,19 @@ import { useRouter, useParams, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { GameHeader } from "@/components/GameHeader";
 import { QuestionCard } from "@/components/QuestionCard";
-import { ResultsCard } from "@/components/ResultsCard";
 import { MazeProgress } from "@/components/MazeProgress";
 import { Button } from "@/components/ui/button";
+import dynamic from "next/dynamic";
+
+const ResultsCard = dynamic(() => import("@/components/ResultsCard").then(mod => mod.ResultsCard), {
+  ssr: false,
+  loading: () => (
+    <div className="text-center animate-pulse">
+      <div className="text-4xl mb-4">🏆</div>
+      <p className="text-xl font-bold">جاري حساب النتائج...</p>
+    </div>
+  )
+});
 import { useGameState } from "@/hooks/useGameState";
 import { useAccessibility } from "@/hooks/useAccessibility";
 import {

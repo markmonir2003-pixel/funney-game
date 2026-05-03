@@ -97,67 +97,67 @@ export default function TeacherPortal() {
     <main className="min-h-screen bg-background text-foreground p-4 md:p-8 relative selection:bg-purple-500/30">
       <div className="max-w-5xl mx-auto">
         <header className="flex flex-col md:flex-row md:items-center justify-between mb-8 md:mb-12 gap-6 pt-8 md:pt-0">
-          <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
+          <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="overflow-hidden">
             <div className="flex items-center gap-3 mb-2">
-              <div className="p-2.5 md:p-3 bg-purple-500/10 rounded-2xl">
+              <div className="p-2.5 md:p-3 bg-purple-500/10 rounded-2xl shrink-0">
                 <GraduationCap className="w-6 h-6 md:w-8 md:h-8 text-purple-500" />
               </div>
-              <h1 className="text-3xl md:text-4xl font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-pink-500">
+              <h1 className="text-2xl md:text-4xl font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-pink-500 truncate">
                 لوحة تحكم المعلم
               </h1>
             </div>
-            <p className="text-sm md:text-base text-muted-foreground font-medium">أنشئ مغامرات وتابع نجاح طلابك</p>
+            <p className="text-xs md:text-base text-muted-foreground font-medium">أنشئ مغامرات وتابع نجاح طلابك</p>
           </motion.div>
 
           <Link href="/">
-            <Button variant="outline" className="w-full md:w-auto rounded-xl border-border hover:bg-muted font-bold h-12">
+            <Button variant="outline" className="w-full md:w-auto rounded-xl border-border hover:bg-muted font-bold h-11 md:h-12 text-sm">
               العودة للرئيسية
             </Button>
           </Link>
         </header>
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-              <div className="flex flex-row items-center justify-between mb-8 gap-4">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
                 <h2 className="text-xl md:text-2xl font-black">جميع المهمات</h2>
                 <Button 
                   onClick={() => setIsAdding(true)}
-                  className="bg-primary hover:opacity-90 text-primary-foreground rounded-xl px-4 md:px-6 h-12 font-bold shadow-lg shadow-primary/20 text-sm md:text-base"
+                  className="w-full sm:w-auto bg-primary hover:opacity-90 text-primary-foreground rounded-xl px-6 h-12 font-bold shadow-lg shadow-primary/20 text-sm md:text-base"
                 >
                   <Plus className="w-5 h-5 ml-2" /> مهمة جديدة
                 </Button>
               </div>
 
               {isAdding && (
-               <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="mb-8 md:mb-12">
-                   <div className="bg-card border border-border p-5 md:p-8 rounded-[2rem] shadow-xl relative overflow-hidden">
+               <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="mb-8 md:mb-12 overflow-hidden">
+                   <div className="bg-card border border-border p-5 md:p-8 rounded-[2rem] shadow-xl relative">
                       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 to-pink-500" />
                       <form onSubmit={handleAddLesson} className="space-y-6">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                            <div className="space-y-2">
-                             <label className="text-sm font-black uppercase tracking-widest text-muted-foreground ml-1">اسم المهمة</label>
+                             <label className="text-xs md:text-sm font-black uppercase tracking-widest text-muted-foreground ml-1">اسم المهمة</label>
                              <input
                                type="text"
                                placeholder="مثلاً: مقدمة في لغة جافا سكريبت"
                                value={newLessonName}
                                onChange={(e) => setNewLessonName(e.target.value)}
-                               className="w-full bg-muted/50 border border-border rounded-2xl px-6 py-4 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all font-bold text-right"
+                               className="w-full bg-muted/50 border border-border rounded-2xl px-5 md:px-6 py-3 md:py-4 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all font-bold text-right text-sm md:text-base"
                                required
                              />
                            </div>
                            <div className="space-y-2">
-                             <label className="text-sm font-black uppercase tracking-widest text-muted-foreground ml-1">الوصف</label>
+                             <label className="text-xs md:text-sm font-black uppercase tracking-widest text-muted-foreground ml-1">الوصف</label>
                              <input
                                type="text"
                                placeholder="عن ماذا تتحدث هذه المهمة؟"
                                value={newLessonDesc}
                                onChange={(e) => setNewLessonDesc(e.target.value)}
-                               className="w-full bg-muted/50 border border-border rounded-2xl px-6 py-4 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all font-bold text-right"
+                               className="w-full bg-muted/50 border border-border rounded-2xl px-5 md:px-6 py-3 md:py-4 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all font-bold text-right text-sm md:text-base"
                              />
                            </div>
                         </div>
-                        <div className="flex flex-col md:flex-row justify-end gap-3 md:gap-4 pt-2">
-                          <Button type="button" variant="ghost" onClick={() => setIsAdding(false)} className="rounded-xl font-bold h-12">إلغاء</Button>
-                          <Button type="submit" className="bg-purple-600 hover:bg-purple-700 text-white rounded-xl px-8 h-12 font-black">إنشاء المغامرة</Button>
+                        <div className="flex flex-col sm:flex-row justify-end gap-3 pt-2">
+                          <Button type="button" variant="ghost" onClick={() => setIsAdding(false)} className="rounded-xl font-bold h-11 md:h-12 text-sm order-2 sm:order-1">إلغاء</Button>
+                          <Button type="submit" className="bg-purple-600 hover:bg-purple-700 text-white rounded-xl px-8 h-11 md:h-12 font-black text-sm order-1 sm:order-2">إنشاء المغامرة</Button>
                         </div>
                       </form>
                    </div>

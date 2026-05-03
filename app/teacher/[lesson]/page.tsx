@@ -111,34 +111,38 @@ export default function QuestionEditor() {
   return (
     <main className="min-h-screen bg-[#0f172a] text-slate-200 p-4 md:p-8">
       <div className="max-w-4xl mx-auto">
-        <header className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-6 pt-4 md:pt-0">
-          <div className="flex items-center gap-3 md:gap-4">
-            <Button 
-              variant="ghost" 
-              onClick={() => router.push("/teacher")}
-              className="text-slate-400 hover:text-white p-2 h-auto"
-            >
-              <ArrowLeft className="w-5 h-5 ml-1 rotate-180" /> عودة
-            </Button>
-            <div>
-              <h1 className="text-2xl md:text-3xl font-bold text-white leading-tight">{lesson.name}</h1>
-              <p className="text-sm md:text-base text-slate-400 font-medium">إدارة الأسئلة ({lesson.questions.length})</p>
+        <header className="flex flex-col gap-4 mb-6 pt-2 md:pt-0">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="flex items-center gap-2 md:gap-3 min-w-0">
+              <Button 
+                variant="ghost" 
+                onClick={() => router.push("/teacher")}
+                className="text-slate-400 hover:text-white p-1 md:p-2 h-auto shrink-0"
+              >
+                <ArrowLeft className="w-4 h-4 md:w-5 md:h-5 ml-1 rotate-180" /> <span className="text-xs md:text-sm">عودة</span>
+              </Button>
+              <div className="min-w-0">
+                <h1 className="text-lg md:text-3xl font-bold text-white leading-tight truncate max-w-[200px] sm:max-w-none">
+                  {lesson.name}
+                </h1>
+                <p className="text-[10px] md:text-base text-slate-400 font-medium">إدارة الأسئلة ({lesson.questions.length})</p>
+              </div>
             </div>
-          </div>
-          <div className="flex gap-3">
-            <Button 
-              onClick={() => setIsGeneratingAI(true)}
-              variant="outline"
-              className="w-full md:w-auto border-cyan-500/30 hover:bg-cyan-500/10 h-12 rounded-xl font-bold text-cyan-400 gap-2"
-            >
-              <Sparkles className="w-5 h-5" /> توليد بالذكاء الاصطناعي
-            </Button>
-            <Button 
-              onClick={() => setIsAdding(true)}
-              className="w-full md:w-auto bg-purple-600 hover:bg-purple-700 h-12 rounded-xl font-bold"
-            >
-              <Plus className="w-5 h-5 ml-2" /> إضافة سؤال
-            </Button>
+            <div className="flex flex-row gap-2 sm:gap-3">
+              <Button 
+                onClick={() => setIsGeneratingAI(true)}
+                variant="outline"
+                className="flex-1 sm:flex-none border-cyan-500/30 hover:bg-cyan-500/10 h-10 md:h-12 rounded-xl font-bold text-cyan-400 gap-1.5 text-[10px] md:text-sm px-3 md:px-4"
+              >
+                <Sparkles className="w-3.5 h-3.5 md:w-5 md:h-5" /> ذكاء اصطناعي
+              </Button>
+              <Button 
+                onClick={() => setIsAdding(true)}
+                className="flex-1 sm:flex-none bg-purple-600 hover:bg-purple-700 h-10 md:h-12 rounded-xl font-bold text-[10px] md:text-sm px-3 md:px-4"
+              >
+                <Plus className="w-4 h-4 md:w-5 md:h-5 ml-1 md:ml-2" /> إضافة سؤال
+              </Button>
+            </div>
           </div>
         </header>
 
@@ -233,9 +237,9 @@ export default function QuestionEditor() {
                 key={q.id}
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
-                className="bg-slate-800/40 border border-slate-700/50 rounded-2xl md:rounded-3xl p-4 md:p-8"
+                className="bg-slate-800/40 border border-slate-700/50 rounded-2xl md:rounded-3xl p-4 md:p-6 lg:p-8 relative group"
               >
-                <div className="flex justify-between items-start gap-4">
+                <div className="flex flex-col-reverse md:flex-row justify-between items-start gap-4">
                   <div className="flex-1 w-full">
                     <div className="flex items-center gap-2 mb-3">
                       <span className="text-[10px] md:text-xs font-black text-purple-400 uppercase tracking-widest">سؤال {idx + 1}</span>
@@ -248,26 +252,28 @@ export default function QuestionEditor() {
                       </span>
                     </div>
                     <p className="text-base md:text-lg text-white font-bold mb-6 leading-relaxed">{q.questionText}</p>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 md:gap-3">
                       {q.options.map((opt, oIdx) => (
                         <div 
                           key={oIdx} 
-                          className={`text-sm py-3 px-4 rounded-xl flex items-center gap-3 transition-all ${
-                            q.correctAnswer === oIdx ? 'bg-green-500/10 text-green-300 border-2 border-green-500/30' : 'bg-slate-900/50 text-slate-400 border border-slate-800'
+                          className={`text-xs md:text-sm py-2.5 md:py-3 px-3 md:px-4 rounded-xl flex items-center gap-3 transition-all ${
+                            q.correctAnswer === oIdx ? 'bg-green-500/10 text-green-300 border border-green-500/30' : 'bg-slate-900/50 text-slate-400 border border-slate-800'
                           }`}
                         >
-                          <div className={`w-2 h-2 rounded-full shrink-0 ${q.correctAnswer === oIdx ? 'bg-green-400 shadow-[0_0_8px_rgba(74,222,128,0.5)]' : 'bg-slate-700'}`} />
-                          <span className="font-medium">{opt}</span>
+                          <div className={`w-1.5 h-1.5 md:w-2 md:h-2 rounded-full shrink-0 ${q.correctAnswer === oIdx ? 'bg-green-400 shadow-[0_0_8px_rgba(74,222,128,0.5)]' : 'bg-slate-700'}`} />
+                          <span className="font-medium truncate">{opt}</span>
                         </div>
                       ))}
                     </div>
                   </div>
-                  <button
-                    onClick={() => handleDeleteQuestion(q.id)}
-                    className="p-3 text-slate-500 hover:text-red-400 hover:bg-red-400/10 rounded-xl transition-all shrink-0"
-                  >
-                    <Trash2 className="w-5 h-5" />
-                  </button>
+                  <div className="w-full md:w-auto flex justify-end">
+                    <button
+                      onClick={() => handleDeleteQuestion(q.id)}
+                      className="p-2 md:p-3 text-slate-500 hover:text-red-400 hover:bg-red-400/10 rounded-xl transition-all"
+                    >
+                      <Trash2 className="w-5 h-5" />
+                    </button>
+                  </div>
                 </div>
               </motion.div>
             ))

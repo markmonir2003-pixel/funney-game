@@ -120,26 +120,41 @@ export function AccessibilityProvider({ children }: { children: React.ReactNode 
    * 4. Chain them via `onend` callbacks so the next one starts the instant
    *    the previous one finishes — no browser-queue timing surprises.
    */
+  const arabicVoiceRef = useRef<SpeechSynthesisVoice | null>(null);
+  const englishVoiceRef = useRef<SpeechSynthesisVoice | null>(null);
+
+  // Pre-pick voices whenever they change
+  useEffect(() => {
+    const updateVoices = () => {
+      arabicVoiceRef.current = pickVoice("ar", ARABIC_VOICE_PRIORITY) || null;
+      englishVoiceRef.current = (pickVoice("en-US", ENGLISH_VOICE_PRIORITY) || pickVoice("en", ENGLISH_VOICE_PRIORITY)) || null;
+    };
+    updateVoices();
+    window.speechSynthesis.addEventListener("voiceschanged", updateVoices);
+    return () => window.speechSynthesis.removeEventListener("voiceschanged", updateVoices);
+  }, []);
+
+  /**
+   * speak() — optimized for zero latency and bilingual support.
+   */
   const speak = useCallback((text: string) => {
     if (!settings.textToSpeech || typeof window === "undefined") return;
 
+    // 1. Instant cancel to clear the pipe
     window.speechSynthesis.cancel();
 
-    // Bump the speech ID so any stale onend from a previous call is ignored
+    // 2. Bump the speech ID to isolate this request
     currentSpeechId.current += 1;
     const mySpeechId = currentSpeechId.current;
 
-    const arabicVoice = pickVoice("ar", ARABIC_VOICE_PRIORITY);
-    const englishVoice =
-      pickVoice("en-US", ENGLISH_VOICE_PRIORITY) ||
-      pickVoice("en", ENGLISH_VOICE_PRIORITY);
+    const arabicVoice = arabicVoiceRef.current;
+    const englishVoice = englishVoiceRef.current;
 
-    // Split text into Arabic / English chunks
+    // 3. Fast-split text into language segments
     const rawChunks = text
       .split(/([a-zA-Z][a-zA-Z0-9 _.,()[\]{}<>=:;'"\\-]*[a-zA-Z0-9_)]|[a-zA-Z])/g)
       .filter(Boolean);
 
-    // Build utterance list
     const utterances: SpeechSynthesisUtterance[] = [];
 
     for (const chunk of rawChunks) {
@@ -148,29 +163,25 @@ export function AccessibilityProvider({ children }: { children: React.ReactNode 
 
       const isEnglish = /[a-zA-Z]/.test(clean);
 
-      if (!isEnglish) {
-        // Improve Arabic prosody with micro-pauses
-        clean = clean
-          .replace(/([0-9]+)/g, " $1 ")
-          .replace(/[?؟]/g, "؟، ")
-          .replace(/[:]/g, ": ")
-          .replace(/[-]/g, " - ")
-          .replace(/\.\s*\.\s*\./g, "، ");
-      }
-
       const utt = new SpeechSynthesisUtterance(clean);
       utt.volume = 1.0;
 
       if (isEnglish) {
         utt.lang = englishVoice?.lang ?? "en-US";
         if (englishVoice) utt.voice = englishVoice;
-        utt.rate = 1.1;
+        utt.rate = 1.35; // Significantly faster English for better flow
         utt.pitch = 1.0;
       } else {
+        // Optimization: Pre-clean Arabic text once
+        const optimizedArabic = clean
+          .replace(/[?؟]/g, "؟، ")
+          .replace(/\.\s*\.\s*\./g, "، ");
+        
+        utt.text = optimizedArabic;
         utt.lang = arabicVoice?.lang ?? "ar-SA";
         if (arabicVoice) utt.voice = arabicVoice;
-        utt.rate = 1.25;
-        utt.pitch = 0.98;
+        utt.rate = 1.4; // Very snappy Arabic pace
+        utt.pitch = 1.0;
       }
 
       utterances.push(utt);
@@ -178,19 +189,22 @@ export function AccessibilityProvider({ children }: { children: React.ReactNode 
 
     if (utterances.length === 0) return;
 
-    // ── Chain utterances via onend so each starts immediately after the previous ──
-    // This removes any browser-imposed gap between language switches.
+    // 4. Ultra-fast chaining
     const speakNext = (index: number) => {
-      if (currentSpeechId.current !== mySpeechId) return; // cancelled
+      if (currentSpeechId.current !== mySpeechId) return; 
       if (index >= utterances.length) return;
 
       const utt = utterances[index];
+      utt.onstart = () => {
+         // Some browsers need a "kickstart" or they pause between chunks
+      };
       utt.onend = () => speakNext(index + 1);
-      utt.onerror = () => speakNext(index + 1); // skip on error, don't stall
+      utt.onerror = () => speakNext(index + 1);
       window.speechSynthesis.speak(utt);
     };
 
-    speakNext(0);
+    // 5. Immediate execution with a 0ms defer to ensure cancel() finished
+    setTimeout(() => speakNext(0), 0);
   }, [settings.textToSpeech]);
 
   return (

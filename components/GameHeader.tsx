@@ -5,18 +5,28 @@ import { Zap, Flame, Clock, Target, LogIn, Accessibility } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
 import { UserButton, SignInButton, useAuth } from "@clerk/nextjs";
 import { Button } from "./ui/button";
-import { useState } from "react";
+import { memo, useState } from "react";
 import { AccessibilityMenu } from "./AccessibilityMenu";
 
-interface GameHeaderProps {
-  xp: number;
-  comboStreak: number;
-  currentQuestion: number;
-  totalQuestions: number;
-  timeRemaining: number;
-}
+// Sub-component for the timer to isolate re-renders
+const TimerDisplay = memo(({ timeRemaining, isTimerWarning }: { timeRemaining: number; isTimerWarning: boolean }) => (
+  <motion.div
+    className={`flex items-center gap-1.5 md:gap-2 rounded-2xl px-2.5 md:px-4 py-1.5 md:py-2 font-black text-sm md:text-lg border-2 ${
+      isTimerWarning
+        ? "bg-red-500/10 border-red-500/50 text-red-500"
+        : "bg-muted/50 border-border text-foreground"
+    }`}
+    animate={isTimerWarning ? { scale: [1, 1.1, 1], rotate: [0, 2, -2, 0] } : {}}
+    transition={{ duration: 0.5, repeat: isTimerWarning ? Infinity : 0 }}
+  >
+    <Clock className={`w-3.5 h-3.5 md:w-5 md:h-5 ${isTimerWarning ? 'text-red-500' : 'text-cyan-500'}`} />
+    <span className="tabular-nums">{timeRemaining}ث</span>
+  </motion.div>
+));
 
-export function GameHeader({
+TimerDisplay.displayName = "TimerDisplay";
+
+export const GameHeader = memo(function GameHeader({
   xp,
   comboStreak,
   currentQuestion,
@@ -89,19 +99,8 @@ export function GameHeader({
               </>
             )}
 
-            {/* Timer */}
-            <motion.div
-              className={`flex items-center gap-1.5 md:gap-2 rounded-2xl px-2.5 md:px-4 py-1.5 md:py-2 font-black text-sm md:text-lg border-2 ${
-                isTimerWarning
-                  ? "bg-red-500/10 border-red-500/50 text-red-500"
-                  : "bg-muted/50 border-border text-foreground"
-              }`}
-              animate={isTimerWarning ? { scale: [1, 1.1, 1], rotate: [0, 2, -2, 0] } : {}}
-              transition={{ duration: 0.5, repeat: isTimerWarning ? Infinity : 0 }}
-            >
-              <Clock className={`w-3.5 h-3.5 md:w-5 md:h-5 ${isTimerWarning ? 'text-red-500' : 'text-cyan-500'}`} />
-              <span className="tabular-nums">{timeRemaining}ث</span>
-            </motion.div>
+            {/* Timer Display isolated to prevent full header re-render */}
+            <TimerDisplay timeRemaining={timeRemaining} isTimerWarning={isTimerWarning} />
           </div>
         </div>
 
@@ -119,4 +118,5 @@ export function GameHeader({
       <AccessibilityMenu isOpen={showAccessibility} onClose={() => setShowAccessibility(false)} />
     </div>
   );
-}
+});
+

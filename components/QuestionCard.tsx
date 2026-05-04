@@ -132,14 +132,16 @@ export const QuestionCard = memo(function QuestionCard({
   const [showSpeedBurst, setShowSpeedBurst] = useState(false);
 
   useEffect(() => {
+    // Reset badge whenever question changes
+    setShowSpeedBurst(false);
+
     // Only trigger if answered correctly within the first 3 seconds
     if (answered && selectedAnswer === question.correctAnswer && timeRemaining >= (timeLimit - 3)) {
       setShowSpeedBurst(true);
-      const t = setTimeout(() => setShowSpeedBurst(false), 1800);
+      const t = setTimeout(() => setShowSpeedBurst(false), 2000);
       return () => clearTimeout(t);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [answered]);
+  }, [answered, question.id]);
 
   // Speak question on load — only fires when question identity changes
   useEffect(() => {
@@ -190,79 +192,26 @@ export const QuestionCard = memo(function QuestionCard({
       <AnimatePresence>
         {showSpeedBurst && (
           <motion.div
-            className="fixed inset-0 z-[200] pointer-events-none flex items-center justify-center"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0, transition: { duration: 0.4 } }}
+            className="fixed top-24 left-0 right-0 z-[200] pointer-events-none flex items-center justify-center"
+            initial={{ opacity: 0, y: -50, scale: 0.8 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8, transition: { duration: 0.2 } }}
           >
-            {/* Radial glow */}
-            <motion.div
-              className="absolute inset-0 bg-yellow-400/10"
-              initial={{ scale: 0.5, opacity: 0 }}
-              animate={{ scale: 1.5, opacity: [0, 0.4, 0] }}
-              transition={{ duration: 0.7, ease: "easeOut" }}
-            />
-
             {/* Main badge */}
             <motion.div
-              className="flex flex-col items-center gap-3"
-              initial={{ scale: 0.2, y: 60, opacity: 0 }}
-              animate={{ scale: 1, y: 0, opacity: 1 }}
-              exit={{ scale: 0.8, y: -40, opacity: 0 }}
-              transition={{ type: "spring", damping: 12, stiffness: 200 }}
+              className="flex flex-col items-center gap-1"
+              initial={{ scale: 0.5 }}
+              animate={{ scale: 1 }}
+              transition={{ type: "spring", damping: 15, stiffness: 300 }}
             >
-              {/* Emoji burst */}
-              <motion.div
-                className="text-[5rem] md:text-[7rem] leading-none drop-shadow-2xl"
-                animate={{
-                  rotate: [0, -12, 12, -8, 8, 0],
-                  scale: [1, 1.15, 1.05, 1.1, 1],
-                }}
-                transition={{ duration: 0.7, ease: "easeInOut" }}
-              >
-                ⚡
-              </motion.div>
-
               {/* Label */}
               <motion.div
-                className="px-6 py-2.5 rounded-2xl bg-yellow-400 text-slate-900 font-black text-xl md:text-2xl tracking-tight shadow-2xl shadow-yellow-400/40 flex items-center gap-2"
-                initial={{ scaleX: 0 }}
-                animate={{ scaleX: 1 }}
-                transition={{ delay: 0.15, type: "spring", damping: 14, stiffness: 280 }}
+                className="px-4 py-2 rounded-full bg-yellow-400 text-slate-900 font-black text-sm md:text-lg tracking-tight shadow-xl shadow-yellow-400/30 flex items-center gap-2"
               >
-                ⚡ صاروخ طيارة!
+                <Zap className="w-4 h-4 fill-current" />
+                <span>صاروخ طيارة!</span>
+                <span className="text-[10px] md:text-xs opacity-80">+50 XP</span>
               </motion.div>
-
-              {/* XP badge */}
-              <motion.div
-                className="text-yellow-300 font-black text-base md:text-lg tracking-widest"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-              >
-                + 50 XP مكافأة السرعة
-              </motion.div>
-
-              {/* Confetti particles */}
-              {["🌟", "✨", "💥", "🎉", "💥", "✨"].map((p, i) => (
-                <motion.span
-                  key={i}
-                  className="absolute text-2xl pointer-events-none select-none"
-                  initial={{
-                    x: 0, y: 0, opacity: 1, scale: 0.5,
-                  }}
-                  animate={{
-                    x: (i % 2 === 0 ? 1 : -1) * (80 + i * 30),
-                    y: -(60 + i * 25),
-                    opacity: 0,
-                    scale: 1.4,
-                    rotate: (i % 2 === 0 ? 1 : -1) * 180,
-                  }}
-                  transition={{ duration: 0.9, delay: i * 0.07, ease: "easeOut" }}
-                >
-                  {p}
-                </motion.span>
-              ))}
             </motion.div>
           </motion.div>
         )}

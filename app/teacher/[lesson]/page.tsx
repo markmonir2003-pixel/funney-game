@@ -44,7 +44,7 @@ export default function QuestionEditor() {
   const virtualizer = useVirtualizer({
     count: lesson?.questions.length || 0,
     getScrollElement: () => parentRef.current,
-    estimateSize: () => 220, // Estimated height of a question card
+    estimateSize: () => 300, // Increased estimate for mobile safety
     overscan: 5,
   });
 
@@ -238,7 +238,7 @@ export default function QuestionEditor() {
 
         <div 
           ref={parentRef}
-          className="max-h-[70vh] overflow-auto scroll-smooth pr-2"
+          className="max-h-[75vh] overflow-auto scroll-smooth pr-2 custom-scrollbar"
         >
           <div
             style={{
@@ -256,26 +256,28 @@ export default function QuestionEditor() {
               virtualizer.getVirtualItems().map((virtualItem) => {
                 const q = lesson.questions[virtualItem.index];
                 return (
-                  <motion.div
+                  <div
                     key={virtualItem.key}
                     style={{
                       position: 'absolute',
                       top: 0,
                       left: 0,
                       width: '100%',
-                      height: `${virtualItem.size}px`,
+                      minHeight: `${virtualItem.size}px`,
                       transform: `translateY(${virtualItem.start}px)`,
+                      paddingBottom: '1.5rem',
                     }}
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    className="pb-4"
                   >
-                    <div className="bg-slate-800/40 border border-slate-700/50 rounded-2xl md:rounded-3xl p-4 md:p-6 lg:p-8 relative group h-full">
-                      <div className="flex flex-col-reverse md:flex-row justify-between items-start gap-4 h-full">
-                        <div className="flex-1 w-full min-w-0 overflow-hidden">
-                          <div className="flex items-center gap-2 mb-2 md:mb-3">
-                            <span className="text-[10px] md:text-xs font-black text-purple-400 uppercase tracking-widest">سؤال {virtualItem.index + 1}</span>
-                            <span className={`text-[8px] md:text-[10px] px-2 py-0.5 rounded-full font-black uppercase ${
+                    <motion.div 
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="bg-slate-800/40 border border-slate-700/50 rounded-2xl md:rounded-3xl p-5 md:p-8 relative group h-full"
+                    >
+                      <div className="flex flex-col-reverse md:flex-row justify-between items-start gap-5">
+                        <div className="flex-1 w-full min-w-0">
+                          <div className="flex items-center gap-2 mb-4">
+                            <span className="text-[10px] md:text-xs font-black text-purple-400 uppercase tracking-widest bg-purple-500/10 px-2 py-1 rounded-md">سؤال {virtualItem.index + 1}</span>
+                            <span className={`text-[8px] md:text-[10px] px-2.5 py-1 rounded-full font-black uppercase ${
                               q.difficulty === 'easy' ? 'bg-green-500/10 text-green-400 border border-green-500/20' :
                               q.difficulty === 'medium' ? 'bg-yellow-500/10 text-yellow-400 border border-yellow-500/20' :
                               'bg-red-500/10 text-red-400 border border-red-500/20'
@@ -283,32 +285,32 @@ export default function QuestionEditor() {
                               {q.difficulty === 'easy' ? 'سهل' : q.difficulty === 'medium' ? 'متوسط' : 'صعب'}
                             </span>
                           </div>
-                          <p className="text-base md:text-lg text-white font-bold mb-3 md:mb-6 leading-relaxed truncate">{q.questionText}</p>
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 md:gap-3">
+                          <p className="text-base md:text-xl text-white font-bold mb-6 leading-relaxed line-clamp-3 md:line-clamp-none">{q.questionText}</p>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             {q.options.map((opt, oIdx) => (
                               <div 
                                 key={oIdx} 
-                                className={`text-[10px] md:text-xs py-1.5 px-3 md:px-4 rounded-xl flex items-center gap-2 md:gap-3 transition-all ${
-                                  q.correctAnswer === oIdx ? 'bg-green-500/10 text-green-300 border border-green-500/30' : 'bg-slate-900/50 text-slate-400 border border-slate-800'
+                                className={`text-[11px] md:text-sm py-2.5 px-4 rounded-xl flex items-center gap-3 transition-all ${
+                                  q.correctAnswer === oIdx ? 'bg-green-500/15 text-green-300 border border-green-500/40' : 'bg-slate-900/60 text-slate-400 border border-slate-800'
                                 }`}
                               >
-                                <div className={`w-1 h-1 md:w-1.5 md:h-1.5 rounded-full shrink-0 ${q.correctAnswer === oIdx ? 'bg-green-400 shadow-[0_0_8px_rgba(74,222,128,0.5)]' : 'bg-slate-700'}`} />
-                                <span className="font-medium truncate">{opt}</span>
+                                <div className={`w-1.5 h-1.5 md:w-2 md:h-2 rounded-full shrink-0 ${q.correctAnswer === oIdx ? 'bg-green-400 shadow-[0_0_8px_rgba(74,222,128,0.5)]' : 'bg-slate-700'}`} />
+                                <span className="font-bold truncate">{opt}</span>
                               </div>
                             ))}
                           </div>
                         </div>
-                        <div className="w-full md:w-auto flex justify-end">
+                        <div className="w-full md:w-auto flex justify-end shrink-0">
                           <button
                             onClick={() => handleDeleteQuestion(q.id)}
-                            className="p-2 md:p-3 text-slate-500 hover:text-red-400 hover:bg-red-400/10 rounded-xl transition-all"
+                            className="p-3 text-slate-500 hover:text-red-400 hover:bg-red-400/10 rounded-xl transition-all bg-slate-900/40"
                           >
                             <Trash2 className="w-5 h-5" />
                           </button>
                         </div>
                       </div>
-                    </div>
-                  </motion.div>
+                    </motion.div>
+                  </div>
                 );
               })
             )}

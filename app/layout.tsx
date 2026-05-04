@@ -79,6 +79,7 @@ const cairo = Cairo({
 
 import { Providers } from '@/components/Providers'
 import { SyncWrapper } from '@/components/SyncWrapper'
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 export default function RootLayout({
   children,
@@ -97,6 +98,19 @@ export default function RootLayout({
           <link rel="dns-prefetch" href="https://img.clerk.com" />
           <link rel="manifest" href="/manifest.json" />
           <link rel="apple-touch-icon" href="/icon-192.png" />
+          {/* Mobile Speed Optimization: Preload the main font */}
+          <link rel="preload" href="/fonts/LutfeyArabicDEMO.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+          <style dangerouslySetInnerHTML={{ __html: `
+            * { touch-action: manipulation; }
+            body { -webkit-tap-highlight-color: transparent; }
+          `}} />
+          <script dangerouslySetInnerHTML={{ __html: `
+            if ('serviceWorker' in navigator) {
+              window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/sw.js');
+              });
+            }
+          `}} />
         </head>
         <body className="font-arabic antialiased min-h-screen" suppressHydrationWarning>
           <Providers>
@@ -117,7 +131,12 @@ export default function RootLayout({
               </ThemeProvider>
             </AccessibilityProvider>
           </Providers>
-          {process.env.NODE_ENV === 'production' && <Analytics />}
+          {process.env.NODE_ENV === 'production' && (
+            <>
+              <Analytics />
+              <SpeedInsights />
+            </>
+          )}
         </body>
       </html>
     </ClerkProvider>
